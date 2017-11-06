@@ -16,6 +16,58 @@ namespace Alphabet
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789";
 
         /// <summary>
+        /// Метод вычисления начало диапазона(сдвига) для строки длины count.
+        /// </summary>
+        /// <param name="count">
+        /// Длина строки.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        public long GetShiftRange(int count)
+        {
+            int i; // переменная цикла
+            long shift = 0; // результат
+            for (i = count - 1; i != 0; --i)
+            {
+                shift += (long)Math.Pow(ActiveAlphabet.Length, i);
+            }
+
+            return shift;
+        }
+
+        /// <summary>
+        /// Метод определения диапазона значений по числу.
+        /// </summary>
+        /// <param name="number">
+        /// Число, для которого нужно определить диапазон.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int DefineRange(long number)
+        {
+            long lastCorrectNumber = this.GetShiftRange(7) - 1;
+
+            // в случае выхода за границы 
+            if (number < 0 || number >= lastCorrectNumber) throw new ApplicationException("Число вне диапазона!");
+
+            if (number >= this.GetShiftRange(1) && number <= this.GetShiftRange(2) - 1) return 1;
+
+            if (number >= this.GetShiftRange(2) && number <= this.GetShiftRange(3) - 1) return 2;
+
+            if (number >= this.GetShiftRange(3) && number <= this.GetShiftRange(4) - 1) return 3;
+
+            if (number >= this.GetShiftRange(4) && number <= this.GetShiftRange(5) - 1) return 4;
+
+            if (number >= this.GetShiftRange(5) && number <= this.GetShiftRange(6) - 1) return 5;
+
+            if (number >= this.GetShiftRange(6) && number <= lastCorrectNumber - 1) return 6;
+
+            return 0; // в случае выхода за границы
+        }
+
+        /// <summary>
         /// Преобразование из строки в число.
         /// </summary>
         /// <param name="word">
@@ -36,163 +88,23 @@ namespace Alphabet
 
             foreach (char t in word)
             {
-                if (ActiveAlphabet.IndexOf(t) < 0 || ActiveAlphabet.IndexOf(t) > ActiveAlphabet.Length)
+                if (ActiveAlphabet.IndexOf(t) == -1)
                     throw new ApplicationException("Символы слова не из действующего алфавита!");
             }
 
-            switch (word.Length)
+            // начало диапазона (сдвиг) для строки длиной word.Length
+            long shift = this.GetShiftRange(word.Length);
+
+            number += shift;
+
+            // вычисление числа
+            for (int i = 0; i < word.Length; ++i)
             {
-                case 1:
-                    {
-                        number = ActiveAlphabet.IndexOf(word, StringComparison.Ordinal);
-                        break;
-                    }
-
-                case 2:
-                    {
-                        // начало диапазона(сдвиг) для двухсимвольной строки
-                        long rangeBegining2 = ActiveAlphabet.Length;
-
-                        for (int i = 0; i < word.Length; ++i)
-                        {
-                            number += (long)(ActiveAlphabet.IndexOf(word[i]) * Math.Pow(
-                                                 ActiveAlphabet.Length,
-                                                 word.Length - i - 1));
-                        }
-
-                        number += rangeBegining2;
-                        break;
-                    }
-
-                case 3:
-                    {
-                        // начало диапазона(сдвиг) для трехсимвольной строки
-                        long rangeBegining3 = (long)(Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length);
-
-                        for (int i = 0; i < word.Length; ++i)
-                        {
-                            number += (long)(ActiveAlphabet.IndexOf(word[i]) * Math.Pow(
-                                                 ActiveAlphabet.Length,
-                                                 word.Length - i - 1));
-                        }
-
-                        number += rangeBegining3;
-                        break;
-                    }
-
-                case 4:
-                    {
-                        // начало диапазона(сдвиг) для четырехсимвольной строки
-                        long rangeBegining4 = (long)(Math.Pow(ActiveAlphabet.Length, 3)
-                                                     + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length);
-
-                        for (int i = 0; i < word.Length; ++i)
-                        {
-                            number += (long)(ActiveAlphabet.IndexOf(word[i]) * Math.Pow(
-                                                 ActiveAlphabet.Length,
-                                                 word.Length - i - 1));
-                        }
-
-                        number += rangeBegining4;
-                        break;
-                    }
-
-                case 5:
-                    {
-                        // начало диапазона(сдвиг) для пятисимвольной строки
-                        long rangeBegining5 = (long)(Math.Pow(ActiveAlphabet.Length, 4)
-                                                     + Math.Pow(ActiveAlphabet.Length, 3)
-                                                     + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length);
-
-                        for (int i = 0; i < word.Length; ++i)
-                        {
-                            number += (long)(ActiveAlphabet.IndexOf(word[i]) * Math.Pow(
-                                                 ActiveAlphabet.Length,
-                                                 word.Length - i - 1));
-                        }
-
-                        number += rangeBegining5;
-                        break;
-                    }
-
-                case 6:
-                    {
-                        // начало диапазона(сдвиг) для шестисимвольной строки
-                        long rangeBegining6 = (long)(Math.Pow(ActiveAlphabet.Length, 5)
-                                                     + Math.Pow(ActiveAlphabet.Length, 4)
-                                                     + Math.Pow(ActiveAlphabet.Length, 3)
-                                                     + Math.Pow(ActiveAlphabet.Length, 2)
-                                                     + ActiveAlphabet.Length);
-
-                        for (int i = 0; i < word.Length; ++i)
-                        {
-                            number += (long)(ActiveAlphabet.IndexOf(word[i]) * Math.Pow(
-                                                 ActiveAlphabet.Length,
-                                                 word.Length - i - 1));
-                        }
-
-                        number += rangeBegining6;
-                        break;
-                    }
+                number += (long)(ActiveAlphabet.IndexOf(word[i]) * Math.Pow(
+                                     ActiveAlphabet.Length,
+                                     word.Length - i - 1));
             }
-
             return number;
-        }
-
-        /// <summary>
-        /// Метод определения диапазона значений по числу.
-        /// </summary>
-        /// <param name="number">
-        /// Число, для которого нужно определить диапазон.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public int DefineRange(long number)
-        {
-            // диапазон, которому принадлежит число
-            // в случае выхода за границы = 0
-            int range = 0;
-            if (number < 0 || number >= Math.Pow(ActiveAlphabet.Length, 6) + Math.Pow(ActiveAlphabet.Length, 5)
-                + Math.Pow(ActiveAlphabet.Length, 4) + Math.Pow(ActiveAlphabet.Length, 3)
-                + Math.Pow(ActiveAlphabet.Length, 2)
-                + ActiveAlphabet.Length) throw new ApplicationException("Число вне диапазона!");
-
-            if (number >= 0 && number <= ActiveAlphabet.Length - 1)
-            {
-                range = 1;
-            }
-            if (number >= ActiveAlphabet.Length
-                && number <= Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length - 1)
-            {
-                range = 2;
-            }
-
-            if (number >= Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length && number
-                <= Math.Pow(ActiveAlphabet.Length, 3) + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length - 1)
-            {
-                range = 3;
-            }
-
-            if (number >= Math.Pow(ActiveAlphabet.Length, 3) + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length && number
-                <= Math.Pow(ActiveAlphabet.Length, 4) + Math.Pow(ActiveAlphabet.Length, 3) + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length - 1)
-            {
-                range = 4;
-            }
-
-            if (number >= Math.Pow(ActiveAlphabet.Length, 4) + Math.Pow(ActiveAlphabet.Length, 3) + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length && number
-                <= Math.Pow(ActiveAlphabet.Length, 5) + Math.Pow(ActiveAlphabet.Length, 4) + Math.Pow(ActiveAlphabet.Length, 3) + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length - 1)
-            {
-                range = 5;
-            }
-
-            if (number >= Math.Pow(ActiveAlphabet.Length, 5) + Math.Pow(ActiveAlphabet.Length, 4) + Math.Pow(ActiveAlphabet.Length, 3) + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length && number
-                <= Math.Pow(ActiveAlphabet.Length, 6) + Math.Pow(ActiveAlphabet.Length, 5) + Math.Pow(ActiveAlphabet.Length, 4) + Math.Pow(ActiveAlphabet.Length, 3) + Math.Pow(ActiveAlphabet.Length, 2) + ActiveAlphabet.Length - 1)
-            {
-                range = 6;
-            }
-
-            return range;
         }
 
         /// <summary>
@@ -206,55 +118,15 @@ namespace Alphabet
         /// </returns>
         public string NumberToString(long number)
         {
-            
-            // создание соответсвия диапазонам и сдвигам (начальным значениям)
-            Dictionary<int, long> offset = new Dictionary<int, long>
-                                               {
-                                                   { 1, 0 },
-                                                   { 2, ActiveAlphabet.Length },
-                                                   {
-                                                       3,
-                                                       (long)(Math.Pow(ActiveAlphabet.Length, 2)
-                                                              + ActiveAlphabet.Length)
-                                                   },
-                                                   {
-                                                       4,
-                                                       (long)(Math.Pow(ActiveAlphabet.Length, 3)
-                                                              + Math.Pow(ActiveAlphabet.Length, 2)
-                                                              + ActiveAlphabet.Length)
-                                                   },
-                                                   {
-                                                       5,
-                                                       (long)(Math.Pow(ActiveAlphabet.Length, 4)
-                                                              + Math.Pow(ActiveAlphabet.Length, 3)
-                                                              + Math.Pow(ActiveAlphabet.Length, 2)
-                                                              + ActiveAlphabet.Length)
-                                                   },
-                                                   {
-                                                       6,
-                                                       (long)(Math.Pow(ActiveAlphabet.Length, 5)
-                                                              + Math.Pow(ActiveAlphabet.Length, 4)
-                                                              + Math.Pow(ActiveAlphabet.Length, 3)
-                                                              + Math.Pow(ActiveAlphabet.Length, 2)
-                                                              + ActiveAlphabet.Length)
-                                                   }
-                                               };
-
-
-            int range = this.DefineRange(number); // определение диапазона числа
             string result = string.Empty; // результирующая строка
-            
-            if (range == 0)
-                throw new Exception("Недопустимое число!");
+            int range = this.DefineRange(number); // определение диапазона числа
 
-            if (range != 0)
+            // вычитаем из числа смещение диапазона для получения исходного числа
+            // т.к. диапазон равен числу символов в слове
+            number -= this.GetShiftRange(range);
+
+            switch (range)
             {
-                // вычитаем из числа смещение диапазона для получения исходного числа
-                number -= offset[range];
-                
-
-                switch (range)
-                {
                     case 1:
                     {
                         int index = (int)number;
@@ -274,18 +146,7 @@ namespace Alphabet
                         result += ActiveAlphabet[remainder];
                         break;
                     }
-
-                    case 3:
-                    {
-                            // правая буква
-                        int remainder = (int)(number % ActiveAlphabet.Length);
-
-                        result += ActiveAlphabet[remainder];
-                        break;
-                    }
-                }
             }
-
             return result;
         }
     }
