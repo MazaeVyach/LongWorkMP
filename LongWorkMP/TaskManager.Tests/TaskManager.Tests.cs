@@ -1,4 +1,5 @@
-﻿namespace TaskManager.Tests
+﻿
+namespace TaskManager.Tests
 {
     public class Class1
     {
