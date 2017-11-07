@@ -1,14 +1,19 @@
 ﻿
 namespace Agent
 {
+    using System;
     using System.Security.Cryptography;
     using System.Text;
+
+    using Alphabet;
 
     /// <summary>
     /// Класс агента.
     /// </summary>
     public class Agent
     {
+        private Alphabet myAplf = new Alphabet();
+
         /// <summary>
         /// Получение MD5 хэша.
         /// </summary>
@@ -21,7 +26,7 @@ namespace Agent
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string GetMd5Hash(MD5 md5Hash, string input)
+        public static string CreateMd5Hash(MD5 md5Hash, string input)
         {
             // Convert the input string to a byte array and compute the hash.
                 byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
@@ -54,13 +59,46 @@ namespace Agent
         {
             using (MD5 md5Hash = MD5.Create())
             {
-                string hash = GetMd5Hash(md5Hash, incoming);
+                string hash = CreateMd5Hash(md5Hash, incoming);
 
                 return hash;
             }
         }
 
-        // Метод BruteForce - перебор хэшей и сравнение с переданным хешем
+        /// <summary>
+        /// Метод перебора строк из двух диапазонов и сравнения с переданным хешем.
+        /// </summary>
+        /// <param name="startRange">
+        /// Начальный диапазон.
+        /// </param>
+        /// <param name="endRange">
+        /// Конечный диапазон.
+        /// </param>
+        /// <param name="hash">
+        /// Хэш, для которого нужно найти исходную строку.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string BruteForce(long startRange, long endRange, string hash)
+        {
+            string result = string.Empty;
+            long i = 0; // переменная цикла
+            for (i = startRange; i <= endRange; ++i)
+            {
+                // известная строка на каждой итерации
+                string currentString = this.myAplf.NumberToString(i);
+
+                // хэш от строки на каждой итерации
+                string currentHash = GetHash(currentString);
+
+                // если полученных хэш равен известному
+                if (hash == currentHash) result = currentString;
+            }
+            if (result != string.Empty) return result;
+            throw new ApplicationException("Хэш не найден!");
+        }
+
         // Метод Взаимодействия с другими модулями
     }
 }

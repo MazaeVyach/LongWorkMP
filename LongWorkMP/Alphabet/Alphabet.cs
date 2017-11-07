@@ -2,7 +2,6 @@
 namespace Alphabet
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Класс Алфавит.
@@ -26,9 +25,12 @@ namespace Alphabet
         /// </returns>
         public long GetShiftRange(int count)
         {
-            int i; // переменная цикла
+            if(count <= 0)
+                throw new ApplicationException("Длина строки должна быть положительна!");
+
             long shift = 0; // результат
-            for (i = count - 1; i != 0; --i)
+
+            for (int i = 1; i < count; ++i)
             {
                 shift += (long)Math.Pow(ActiveAlphabet.Length, i);
             }
@@ -47,24 +49,25 @@ namespace Alphabet
         /// </returns>
         public int DefineRange(long number)
         {
+            int range = 0;
             long lastCorrectNumber = this.GetShiftRange(7) - 1;
 
             // в случае выхода за границы 
-            if (number < 0 || number >= lastCorrectNumber) throw new ApplicationException("Число вне диапазона!");
+            if (number < 0 || number > lastCorrectNumber) throw new ApplicationException("Число вне диапазона!");
 
-            if (number >= this.GetShiftRange(1) && number <= this.GetShiftRange(2) - 1) return 1;
+            if (number >= this.GetShiftRange(1) && number <= this.GetShiftRange(2) - 1) range =  1;
 
-            if (number >= this.GetShiftRange(2) && number <= this.GetShiftRange(3) - 1) return 2;
+            if (number >= this.GetShiftRange(2) && number <= this.GetShiftRange(3) - 1) range =  2;
 
-            if (number >= this.GetShiftRange(3) && number <= this.GetShiftRange(4) - 1) return 3;
+            if (number >= this.GetShiftRange(3) && number <= this.GetShiftRange(4) - 1) range =  3;
 
-            if (number >= this.GetShiftRange(4) && number <= this.GetShiftRange(5) - 1) return 4;
+            if (number >= this.GetShiftRange(4) && number <= this.GetShiftRange(5) - 1) range =  4;
 
-            if (number >= this.GetShiftRange(5) && number <= this.GetShiftRange(6) - 1) return 5;
+            if (number >= this.GetShiftRange(5) && number <= this.GetShiftRange(6) - 1) range = 5;
 
-            if (number >= this.GetShiftRange(6) && number <= lastCorrectNumber - 1) return 6;
+            if (number >= this.GetShiftRange(6) && number <= lastCorrectNumber ) range = 6;
 
-            return 0; // в случае выхода за границы
+            return range; // в случае выхода за границы
         }
 
         /// <summary>
@@ -104,6 +107,7 @@ namespace Alphabet
                                      ActiveAlphabet.Length,
                                      word.Length - i - 1));
             }
+
             return number;
         }
 
@@ -118,36 +122,21 @@ namespace Alphabet
         /// </returns>
         public string NumberToString(long number)
         {
-            string result = string.Empty; // результирующая строка
             int range = this.DefineRange(number); // определение диапазона числа
+
+            char[] sBuilder = new char[range];
 
             // вычитаем из числа смещение диапазона для получения исходного числа
             // т.к. диапазон равен числу символов в слове
             number -= this.GetShiftRange(range);
-
-            switch (range)
+          
+            for (int i = range - 1; i >= 0; i--)
             {
-                    case 1:
-                    {
-                        int index = (int)number;
-                        result = ActiveAlphabet[index].ToString();
-                        break;
-                    }
-
-                    case 2:
-                    {
-                        // остаток от деления (самая правая буква)
-                        int remainder = (int)(number % ActiveAlphabet.Length);
-
-                        // буква левее
-                        int quotient = (int)((number - remainder) / ActiveAlphabet.Length);
-                        
-                        result += ActiveAlphabet[quotient];
-                        result += ActiveAlphabet[remainder];
-                        break;
-                    }
+                sBuilder[i] = ActiveAlphabet[(int)(number % ActiveAlphabet.Length)];
+                number = number / ActiveAlphabet.Length;
             }
-            return result;
+
+            return new string(sBuilder);
+            }
         }
     }
-}

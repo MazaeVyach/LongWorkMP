@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GetShiftRange.Tests.cs" />
     <Compile Include="StringToNumber.Tests.cs" />
     <Compile Include="DefineRange.Tests.cs" />
     <Compile Include="NumberToString.Tests.cs" />

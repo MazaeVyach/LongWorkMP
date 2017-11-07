@@ -2,6 +2,9 @@
 namespace Alphabet.Tests
 {
     using System;
+
+    using global::Alphabet;
+
     using NUnit.Framework;
 
     /// <summary>

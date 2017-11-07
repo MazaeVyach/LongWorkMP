@@ -37,6 +37,12 @@
     <Compile Include="Agent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Alphabet\Alphabet.csproj">
+      <Project>{f0da2c1d-7fb0-461a-831b-3438845f3c64}</Project>
+      <Name>Alphabet</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

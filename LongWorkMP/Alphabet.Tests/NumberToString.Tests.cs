@@ -3,13 +3,16 @@
 namespace Alphabet.Tests
 {
     using System;
+
+    using global::Alphabet;
+
     using NUnit.Framework;
 
     /// <summary>
     /// Тесты метода NumberToString().
     /// </summary>
     [TestFixture]
-    public class NumberToString
+    public class NumberToStringTest
     {
         /// <summary>
         /// Создание алфавита
@@ -73,7 +76,7 @@ namespace Alphabet.Tests
         /// <summary>
         /// Тесты на числа третьего диапазона.
         /// </summary>
-        /*[Test]
+        [Test]
         public void ThirdRangeTests()
         {
             string start = this.myAlph.NumberToString(16512);
@@ -84,12 +87,12 @@ namespace Alphabet.Tests
 
             string end = this.myAlph.NumberToString(2113663);
             Assert.That(end, Is.EqualTo("999"));
-        }*/
+        }
 
         /// <summary>
         /// Тесты на числа четвертого диапазона.
         /// </summary>
-        /*[Test]
+        [Test]
         public void FourthRangeTests()
         {
             string start = this.myAlph.NumberToString(2113664);
@@ -132,6 +135,6 @@ namespace Alphabet.Tests
 
             string end = this.myAlph.NumberToString(4432676798591);
             Assert.That(end, Is.EqualTo("999999"));
-        }*/
+        }
     }
 }

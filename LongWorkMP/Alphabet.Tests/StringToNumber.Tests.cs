@@ -2,6 +2,9 @@
 namespace Alphabet.Tests
 {
     using System;
+
+    using global::Alphabet;
+
     using NUnit.Framework;
 
     /// <summary>
@@ -115,6 +118,9 @@ namespace Alphabet.Tests
         {
             long start = this.myAlph.StringToNumber("AAAA");
             Assert.That(start, Is.EqualTo(2113664));
+
+            long eng = this.myAlph.StringToNumber("test");
+            Assert.That(eng, Is.EqualTo(96982701));
 
             long rus = this.myAlph.StringToNumber("море");
             Assert.That(rus, Is.EqualTo(139535161));
