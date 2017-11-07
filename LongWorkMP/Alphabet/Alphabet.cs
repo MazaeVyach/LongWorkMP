@@ -25,15 +25,13 @@ namespace Alphabet
         /// </returns>
         public long GetShiftRange(int count)
         {
-            if(count <= 0)
+            if (count <= 0)
                 throw new ApplicationException("Длина строки должна быть положительна!");
 
             long shift = 0; // результат
 
             for (int i = 1; i < count; ++i)
-            {
                 shift += (long)Math.Pow(ActiveAlphabet.Length, i);
-            }
 
             return shift;
         }
@@ -67,7 +65,7 @@ namespace Alphabet
 
             if (number >= this.GetShiftRange(6) && number <= lastCorrectNumber ) range = 6;
 
-            return range; // в случае выхода за границы
+            return range; 
         }
 
         /// <summary>
@@ -85,9 +83,7 @@ namespace Alphabet
 
             // Если слово состоит из символов не из алфавита или слово длиньше 6 символов
             if (word.Length > 6 || word.Length <= 0)
-            {
                 throw new ApplicationException("Неверная длина слова!");
-            }
 
             foreach (char t in word)
             {
@@ -139,4 +135,4 @@ namespace Alphabet
             return new string(sBuilder);
             }
         }
-    }
+ }

@@ -36,7 +36,6 @@ namespace Alphabet.Tests
                     With.Message.EqualTo("Число вне диапазона!"));
 
             Assert.Throws<ApplicationException>(() => this.myAlph.DefineRange(4432676798592));
-
         }
 
         /// <summary>

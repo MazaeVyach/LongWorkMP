@@ -38,9 +38,7 @@ namespace Agent
                 // Loop through each byte of the hashed data 
                 // and format each one as a hexadecimal string.
                 for (int i = 0; i < data.Length; i++)
-                {
                     sBuilder.Append(data[i].ToString("x2"));
-                }
 
                 // Return the hexadecimal string.
                 return sBuilder.ToString();
@@ -83,8 +81,7 @@ namespace Agent
         public string BruteForce(long startRange, long endRange, string hash)
         {
             string result = string.Empty;
-            long i = 0; // переменная цикла
-            for (i = startRange; i <= endRange; ++i)
+            for (long i = startRange; i <= endRange; ++i)
             {
                 // известная строка на каждой итерации
                 string currentString = this.myAplf.NumberToString(i);
@@ -95,6 +92,7 @@ namespace Agent
                 // если полученных хэш равен известному
                 if (hash == currentHash) result = currentString;
             }
+
             if (result != string.Empty) return result;
             throw new ApplicationException("Хэш не найден!");
         }

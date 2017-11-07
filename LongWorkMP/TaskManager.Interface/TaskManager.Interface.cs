@@ -1,4 +1,5 @@
-﻿namespace TaskManager.Interface
+﻿
+namespace TaskManager.Interface
 {
     public class Program
     {
