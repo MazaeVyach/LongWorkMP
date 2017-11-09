@@ -39,7 +39,7 @@ namespace Agent.Tests
             Assert.That(() => this.myAgent.BruteForce(15222, 15223, knownHash),
                 Throws.TypeOf<ApplicationException>().
                     With.Message.EqualTo("Хэш не найден!"));
-
+            //250000 за 2 секунды
             Assert.Throws<ApplicationException>(() => this.myAgent.BruteForce(15222, 15223, knownHash));
         }
     }
