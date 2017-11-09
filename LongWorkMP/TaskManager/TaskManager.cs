@@ -3,43 +3,16 @@ namespace TaskManager
 {
     using System.Collections.Generic;
 
-    /// <summary>
-    /// Task for calculate.
-    /// </summary>
-    public class Task
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Task"/> class.
-        /// </summary>
-        /// <param name="beginValue">
-        /// The begin value.
-        /// </param>
-        /// <param name="endValue">
-        /// The end value.
-        /// </param>
-        public Task(long beginValue, long endValue)
-        {
-            this.BeginValue = beginValue;
-            this.EndValue = endValue;
-        }
-
-        /// <summary>
-        /// Gets or sets the begin value.
-        /// </summary>
-        private long BeginValue { get; set; }
-
-        /// <summary>
-        /// Gets or sets the end value.
-        /// </summary>
-        private long EndValue { get; set; }
-    }
+    using Alphabet;
+    using InterworkingModule;
 
     public class Class1
     {
-        private SortedDictionary<int, Task> GetTaskDictionary(string beginValueStr, string endValueStr, int taskSize)
+        private SortedDictionary<int, Task> GetTaskDictionary(string beginValueStr, string endValueStr, int taskSize, string md5Sum)
         {
-            long beginValue = 0; // = Alphabet.StringToNumber(beginValueStr)
-            long endValue = 0; // = Alphabet.StringToNumber(endValueStr)
+            Alphabet alphabet = new Alphabet();
+            long beginValue = alphabet.StringToNumber(beginValueStr);
+            long endValue = alphabet.StringToNumber(endValueStr);
 
             SortedDictionary<int, Task> taskDictionary = new SortedDictionary<int, Task>();
 
@@ -53,12 +26,14 @@ namespace TaskManager
                 else
                     endRange += taskSize;
 
-                Task task = new Task(beginRange, endRange);
+                Task task = new Task(beginRange, endRange, md5Sum);
 
                 beginValue = endRange + 1;
             }
 
             return taskDictionary;
         }
+
+
     }
 }
