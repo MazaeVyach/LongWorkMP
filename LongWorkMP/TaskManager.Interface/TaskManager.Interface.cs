@@ -9,6 +9,7 @@ namespace TaskManager.Interface
 
     public class Program
     {
+
         private static void Main(string[] args)
         {
             Console.Write("Введите начало диапазона ");
@@ -18,7 +19,8 @@ namespace TaskManager.Interface
             Console.Write("Введите md5 свертку ");
             string md5Sum = Console.ReadLine();
             Console.Write("Подождите идет подбор пароля...");
-            TaskManager taskManager = new TaskManager(begin, end, md5Sum);       
+            TaskManager taskManager = new TaskManager(begin, end, md5Sum);
+                 
         }
     }
 }

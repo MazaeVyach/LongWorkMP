@@ -69,6 +69,11 @@
 
         public bool FindPassword(ref string password)
         {
+            while (true)
+            {
+
+                break;
+            }
 
             return false;
         }
