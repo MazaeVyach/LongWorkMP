@@ -1,5 +1,4 @@
-﻿
-namespace Agent.Tests
+﻿namespace Agent.Tests
 {
     using System;
 

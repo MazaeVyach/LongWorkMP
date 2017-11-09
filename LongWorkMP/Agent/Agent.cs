@@ -81,6 +81,7 @@ namespace Agent
         public string BruteForce(long startRange, long endRange, string hash)
         {
             string result = string.Empty;
+
             for (long i = startRange; i <= endRange; ++i)
             {
                 // известная строка на каждой итерации
@@ -90,10 +91,13 @@ namespace Agent
                 string currentHash = GetHash(currentString);
 
                 // если полученных хэш равен известному
-                if (hash == currentHash) result = currentString;
+                if (hash == currentHash)
+                    result = currentString;
             }
 
-            if (result != string.Empty) return result;
+            if (result != string.Empty)
+                return result;
+
             throw new ApplicationException("Хэш не найден!");
         }
 

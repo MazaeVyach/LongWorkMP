@@ -1,5 +1,4 @@
-﻿
-namespace Alphabet
+﻿namespace Alphabet
 {
     using System;
 
