@@ -1,6 +1,6 @@
 ﻿namespace Task
 {
-    public struct Task
+    public class Task
     {
         public Task(long rangeStart, long rangeEnd, string md5Sum)
         {

@@ -1,38 +1,76 @@
-﻿
-namespace TaskManager
+﻿namespace TaskManager
 {
     using System.Collections.Generic;
+    using System.Security.Cryptography;
 
     using Alphabet;
+    using Task;
 
-    public class Class1
+    public class TaskManager
     {
-        private SortedDictionary<int, Task> GetTaskDictionary(string beginValueStr, string endValueStr, int taskSize, string md5Sum)
+        /// <summary>
+        /// The begin range.
+        /// </summary>
+        private long beginRange;
+
+        /// <summary>
+        /// The end range.
+        /// </summary>
+        private long endRange;
+
+        /// <summary>
+        /// The curent value.
+        /// </summary>
+        private long curentValue;
+
+        private string md5Sum;
+
+        private Alphabet alphabet;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaskManager"/> class.
+        /// </summary>
+        /// <param name="beginRange">
+        /// The begin range.
+        /// </param>
+        /// <param name="endRange">
+        /// The end range.
+        /// </param>
+        public TaskManager(string beginRange, string endRange, string md5Sum)
         {
-            Alphabet alphabet = new Alphabet();
-            long beginValue = alphabet.StringToNumber(beginValueStr);
-            long endValue = alphabet.StringToNumber(endValueStr);
-
-            SortedDictionary<int, Task> taskDictionary = new SortedDictionary<int, Task>();
-
-            long beginRange = beginValue;
-            long endRange = beginValue + taskSize;
-
-            while (beginRange <= endValue)
-            {
-                if (beginRange + taskSize > endValue)
-                    endRange = endValue;
-                else
-                    endRange += taskSize;
-
-                Task task = new Task(beginRange, endRange, md5Sum);
-
-                beginValue = endRange + 1;
-            }
-
-            return taskDictionary;
+            this.alphabet = new Alphabet();
+            this.beginRange = this.alphabet.StringToNumber(beginRange);
+            this.curentValue = this.beginRange;
+            this.endRange = this.alphabet.StringToNumber(endRange);
+            this.md5Sum = md5Sum;       
         }
 
+        private bool GetTask(int taskSize, ref Task task)
+        {
+            long beginValue = this.curentValue;
+            long endValue = beginValue + taskSize;
 
+            if (this.curentValue > this.endRange)
+            {
+                task = new Task(this.endRange, this.endRange, this.md5Sum);
+                return false;
+            }
+
+            if (endValue > this.endRange)
+            {
+                endValue = this.endRange;
+            }
+
+            this.curentValue = endValue + 1;
+            task = new Task(beginValue, endValue, this.md5Sum);
+
+            return true;
+        }
+
+        public bool FindPassword(ref string password)
+        {
+
+            return false;
+        }
     }
 }

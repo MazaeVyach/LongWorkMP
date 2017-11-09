@@ -2,6 +2,8 @@
 {
     using System;
 
+    using NUnit.Framework;
+
     /// <summary>
     /// Тесты для функции перебора.
     /// </summary>

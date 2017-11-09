@@ -5,6 +5,8 @@ namespace Alphabet.Tests
 
     using global::Alphabet;
 
+    using NUnit.Framework;
+
     /// <summary>
     /// Тесты метода WhichRange().
     /// </summary>
