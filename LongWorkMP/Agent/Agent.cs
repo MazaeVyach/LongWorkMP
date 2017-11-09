@@ -1,11 +1,13 @@
-﻿
-namespace Agent
+﻿namespace Agent
 {
     using System;
-    using System.Security.Cryptography;
     using System.Text;
+    using System.Net.Sockets;
+    using System.Security.Cryptography;
 
     using Alphabet;
+    using AgentInformation;
+    using Task;
 
     /// <summary>
     /// Класс агента.
@@ -102,5 +104,62 @@ namespace Agent
         }
 
         // Метод Взаимодействия с другими модулями
+
+        private const int Port = 8888;
+        private const string Address = "127.0.0.1";
+
+        public void Interworking()
+        {
+            TcpClient tcpClient = null;
+
+            try
+            {
+                tcpClient = new TcpClient(Address, Port);
+
+                NetworkStream networkStream = tcpClient.GetStream();
+
+                byte[] data = new byte[64]; // Буфер для получаемых/отправляемых данных.
+
+                // Отправляем диспетчеру информацию об агенте.
+                AgentInformation agentInfo = new AgentInformation(4, 555555);   // Здесь Agent отправляет информацию о себе диспетчеру заданий.
+
+                data = Encoding.Unicode.GetBytes(agentInfo.Serealize());
+
+                networkStream.Write(data, 0, data.Length);
+
+                while (true)
+                {
+                    // Получаем задание от диспетчера заданий.
+                    StringBuilder message = new StringBuilder();
+
+                    do
+                    {
+                        int bytesCount = networkStream.Read(data, 0, data.Length);
+                        message.Append(Encoding.Unicode.GetString(data, 0, bytesCount));
+
+                    } while (networkStream.DataAvailable);
+
+                    Task task = Task.Deserealize(message.ToString());
+
+                    // Здесь агент должен принять задание на выполнение.
+
+                    // Отправляем диспетчеру вычисленный пароль.
+                    string password = "";   // Здесь агент должен представить результаты вычислений.
+
+                    data = Encoding.Unicode.GetBytes(password);
+
+                    networkStream.Write(data, 0, data.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                if (tcpClient != null)
+                    tcpClient.Close();
+            }
+        }
     }
 }

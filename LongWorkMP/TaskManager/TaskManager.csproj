@@ -34,6 +34,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientObject.cs" />
     <Compile Include="TaskManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -45,10 +46,6 @@
     <ProjectReference Include="..\Alphabet\Alphabet.csproj">
       <Project>{F0DA2C1D-7FB0-461A-831B-3438845F3C64}</Project>
       <Name>Alphabet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\InterworkingModule\InterworkingModule.csproj">
-      <Project>{b9a4de9c-123c-4de1-a94f-4fc2d21e9fe5}</Project>
-      <Name>InterworkingModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\Task\Task.csproj">
       <Project>{1909ac39-ed4d-4fe9-85d8-55b0c08e8366}</Project>
