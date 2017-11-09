@@ -46,10 +46,10 @@
             this.beginRange = this.alphabet.StringToNumber(beginRange);
             this.curentValue = this.beginRange;
             this.endRange = this.alphabet.StringToNumber(endRange);
-            this.md5Sum = md5Sum;       
+            this.md5Sum = md5Sum;
         }
 
-        private bool GetTask(int taskSize, ref Task task)
+        public bool GetTask(long taskSize, ref Task task)
         {
             long beginValue = this.curentValue;
             long endValue = beginValue + taskSize;
@@ -99,7 +99,7 @@
                 while (true)
                 {
                     TcpClient client = _listener.AcceptTcpClient(); // Подключение нового клиента.
-                    ClientObject clientObject = new ClientObject(client);
+                    ClientObject clientObject = new ClientObject(client, this);
 
                     // Создаем новый поток для обслуживания нового клиента.
                     Thread clientThread = new Thread(clientObject.Process);

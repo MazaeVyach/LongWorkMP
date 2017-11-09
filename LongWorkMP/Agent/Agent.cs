@@ -108,7 +108,7 @@
         private const int Port = 8888;
         private const string Address = "127.0.0.1";
 
-        public void Interworking()
+        static public void Interworking()
         {
             TcpClient tcpClient = null;
 
@@ -121,7 +121,7 @@
                 byte[] data = new byte[64]; // Буфер для получаемых/отправляемых данных.
 
                 // Отправляем диспетчеру информацию об агенте.
-                AgentInformation agentInfo = new AgentInformation(4, 555555);   // Здесь Agent отправляет информацию о себе диспетчеру заданий.
+                AgentInformation agentInfo = new AgentInformation(4, 10555);   // Здесь Agent отправляет информацию о себе диспетчеру заданий.
 
                 data = Encoding.Unicode.GetBytes(agentInfo.Serealize());
 
@@ -144,7 +144,7 @@
                     // Здесь агент должен принять задание на выполнение.
 
                     // Отправляем диспетчеру вычисленный пароль.
-                    string password = "";   // Здесь агент должен представить результаты вычислений.
+                    string password = "Kolya - hui";   // Здесь агент должен представить результаты вычислений.
 
                     data = Encoding.Unicode.GetBytes(password);
 

@@ -11,14 +11,19 @@
     {
         public TcpClient Client;
 
-        public ClientObject(TcpClient tcpClient)
+        private TaskManager _taskManager;
+
+        public ClientObject(TcpClient tcpClient, TaskManager  taskManager)
         {
             Client = tcpClient;
+            _taskManager = taskManager;
+
         }
 
         public void Process()
         {
             NetworkStream networkStream = null; // Базовый поток данных для доступа к сети.
+            Task task = null;
 
             try
             {
@@ -29,25 +34,24 @@
                 AgentInformation agentInfo = AgentInformation.Deserealize(agentInfoStr);
 
                 // Здесь TaskManager заносит себе куда-то информацию о данном агента.
+                long taskSize = agentInfo.CoresCount * agentInfo.PasswordPerSecond * 5;
+                
 
-
-                while (true)
+                while (_taskManager.GetTask(taskSize, ref task))
                 {
-                    // Отправляем задание агенту.
-                    Task task = new Task(1, 2, "123");  // Здесь TaskManager выдает задание данному агента.
-
                     byte[] data = Encoding.Unicode.GetBytes(task.Serealize());
                     networkStream.Write(data, 0, data.Length);
 
                     // Получаем информацию о подобранном пароле.
                     string password = GetStrFromStream(networkStream);  // Результат работы агента.
-
+                    Console.WriteLine(password);
                     // Здесь TaskManager обрабатывает результат работы агента.
 
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Провалилось на диапазоне {0} - {1}", task.RangeStart, task.RangeEnd);
                 Console.WriteLine(ex.Message);
             }
             finally

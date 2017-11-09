@@ -8,6 +8,7 @@ namespace Agent.Interface
         private static void Main(string[] args)
         {
             Console.WriteLine("This is Agent Interface!");
+            Agent.Interworking();
         }
     }
 }

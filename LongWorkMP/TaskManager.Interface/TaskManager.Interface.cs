@@ -18,7 +18,7 @@
             string md5Sum = Console.ReadLine();
             Console.Write("Подождите идет подбор пароля...");
             TaskManager taskManager = new TaskManager(begin, end, md5Sum);
-                 
+            taskManager.Interworking();
         }
     }
 }
