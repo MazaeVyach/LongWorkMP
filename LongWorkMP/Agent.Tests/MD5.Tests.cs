@@ -1,5 +1,4 @@
-﻿
-namespace Agent.Tests
+﻿namespace Agent.Tests
 {
     /// <summary>
     /// Тесты метода GetMd5Hash()

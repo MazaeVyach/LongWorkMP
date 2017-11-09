@@ -35,9 +35,6 @@
     <Reference Include="System.Messaging" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ResultsQueue.cs" />
-    <Compile Include="Ping.cs" />
-    <Compile Include="TasksQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
