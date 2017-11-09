@@ -1,8 +1,5 @@
 ﻿namespace InterworkingModule
 {
-    using System;
-    using System.Messaging;
-
     public class ResultsQueue
     {
        /* public void FindQueue()

@@ -4,7 +4,6 @@ namespace TaskManager
     using System.Collections.Generic;
 
     using Alphabet;
-    using InterworkingModule;
 
     public class Class1
     {

@@ -1,10 +1,6 @@
 ﻿
 namespace Agent.Tests
 {
-    using System;
-
-    using NUnit.Framework;
-
     /// <summary>
     /// Тесты метода GetMd5Hash()
     /// </summary>
