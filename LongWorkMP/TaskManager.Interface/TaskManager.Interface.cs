@@ -1,11 +1,9 @@
-﻿
-namespace TaskManager.Interface
+﻿namespace TaskManager.Interface
 {
     using System;
 
-    using Alphabet;
-
     using Task;
+    using Alphabet;
 
     public class Program
     {

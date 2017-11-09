@@ -1,5 +1,9 @@
 ﻿namespace TaskManager
 {
+    using System;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Threading;
     using System.Collections.Generic;
     using System.Security.Cryptography;
 
@@ -76,6 +80,41 @@
             }
 
             return false;
+        }
+
+        // Метод взаимодействия с клиентом.
+
+        private const int Port = 8888;
+        private const string Address = "127.0.0.1";
+        private static TcpListener _listener;
+
+        public void Interworking()
+        {
+            try
+            {
+                _listener = new TcpListener(IPAddress.Parse(Address), Port);
+
+                _listener.Start();  // Запуск ожидания входящих запросов на подключение.
+
+                while (true)
+                {
+                    TcpClient client = _listener.AcceptTcpClient(); // Подключение нового клиента.
+                    ClientObject clientObject = new ClientObject(client);
+
+                    // Создаем новый поток для обслуживания нового клиента.
+                    Thread clientThread = new Thread(clientObject.Process);
+                    clientThread.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                if (_listener != null)
+                    _listener.Stop();
+            }
         }
     }
 }

@@ -38,9 +38,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AgentInformation\AgentInformation.csproj">
+      <Project>{d19d03f9-0b91-4c61-82a5-ebd164ee563b}</Project>
+      <Name>AgentInformation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Alphabet\Alphabet.csproj">
       <Project>{f0da2c1d-7fb0-461a-831b-3438845f3c64}</Project>
       <Name>Alphabet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Task\Task.csproj">
+      <Project>{1909ac39-ed4d-4fe9-85d8-55b0c08e8366}</Project>
+      <Name>Task</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
