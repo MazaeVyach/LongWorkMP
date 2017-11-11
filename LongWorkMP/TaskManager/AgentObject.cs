@@ -7,17 +7,19 @@
     using Task;
     using AgentInformation;
 
-    public class ClientObject
+    /// <summary>
+    /// Класс для взаимодействия диспетчера заданий с агентом.
+    /// </summary>
+    public class AgentObject
     {
         public TcpClient Client;
 
-        private TaskManager _taskManager;
+        private readonly TaskManager _taskManager;
 
-        public ClientObject(TcpClient tcpClient, TaskManager  taskManager)
+        public AgentObject(TcpClient tcpClient, TaskManager  taskManager)
         {
             Client = tcpClient;
             _taskManager = taskManager;
-
         }
 
         public void Process()
@@ -64,6 +66,15 @@
             }
         }
 
+        /// <summary>
+        /// Метод считывания строки из базового потока данных для доступа к сети.
+        /// </summary>
+        /// <param name="networkStream">
+        /// Базовый поток данных для доступа к сети.
+        /// </param>
+        /// <returns>
+        /// Строка, считанная из потока.
+        /// </returns>
         private string GetStrFromStream(NetworkStream networkStream)
         {
             byte[] bytesBuffer = new byte[128];  // Буфер байтов получаемых данных.

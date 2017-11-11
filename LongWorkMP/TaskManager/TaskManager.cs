@@ -82,12 +82,25 @@
             return false;
         }
 
-        // Метод взаимодействия с клиентом.
-
-        private const int Port = 8888;
+        /// <summary>
+        /// Адресс узла диспетчера заданий.
+        /// </summary>
         private const string Address = "127.0.0.1";
+
+        /// <summary>
+        /// Порт указанного узла диспетчера заданий.
+        /// </summary>
+        private const int Port = 8888;
+
+        /// <summary>
+        /// Объект класса TcpListener, который будет прослушивать
+        /// подключения к диспетчеру заданий от агентов.
+        /// </summary>
         private static TcpListener _listener;
 
+        /// <summary>
+        /// Метод взаимодействия диспетчера заданий с агентами.
+        /// </summary>
         public void Interworking()
         {
             try
@@ -99,10 +112,10 @@
                 while (true)
                 {
                     TcpClient client = _listener.AcceptTcpClient(); // Подключение нового клиента.
-                    ClientObject clientObject = new ClientObject(client, this);
+                    AgentObject agentObject = new AgentObject(client, this);
 
                     // Создаем новый поток для обслуживания нового клиента.
-                    Thread clientThread = new Thread(clientObject.Process);
+                    Thread clientThread = new Thread(agentObject.Process);
                     clientThread.Start();
                 }
             }
