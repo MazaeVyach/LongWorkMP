@@ -44,15 +44,33 @@
             this.curentValue = this.beginRange;
             this.endRange = this.alphabet.StringToNumber(endRange);
             this.md5Sum = md5Sum;
-            CreateTaskQueue(5000);
+            queue = new Stack<Task>();
         }
 
-        public bool GetTask(ref Task task)
+        public bool GetTask(long taskSize, ref Task task)
         {
-            if (queue.Count == 0)
-                return false;
+            if (queue.Count != 0)
+            {
+                task = this.queue.Pop();
+                return true;
+            }
 
-            task = this.queue.Pop();
+            long beginValue = this.curentValue;
+            long endValue = beginValue + taskSize;
+
+            if (this.curentValue > this.endRange)
+            {
+                task = new Task(this.endRange, this.endRange, this.md5Sum);
+                return false;
+            }
+               
+            if (endValue > this.endRange)
+            {
+                endValue = this.endRange;
+            }
+
+            this.curentValue = endValue + 1;
+            task = new Task(beginValue, endValue, this.md5Sum);
 
             return true;
         }
@@ -60,23 +78,6 @@
         public void PushTask(Task task)
         {
             queue.Push(task);
-        }
-
-        public void CreateTaskQueue(long taskSize)
-        {
-            long beginValue = curentValue;
-            queue = new Stack<Task>();
-
-            while (beginValue <= endRange)
-            {
-                long endValue = beginValue + taskSize;
-
-                if (endValue > this.endRange)
-                    endValue = this.endRange;
-
-                queue.Push(new Task(beginValue, endValue, md5Sum));
-                beginValue = endValue + 1;
-            }
         }
    
     }
