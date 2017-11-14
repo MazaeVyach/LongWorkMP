@@ -1,5 +1,7 @@
 ﻿namespace TaskManager
 {
+    using System.Collections.Generic;
+
     using Alphabet;
     using Task;
 
@@ -73,10 +75,9 @@
                     endValue = this.endRange;
 
                 queue.Push(new Task(beginValue, endValue, md5Sum));
-                beginValue += endValue + 1;
+                beginValue = endValue + 1;
             }
         }
-
-       
+   
     }
 }
