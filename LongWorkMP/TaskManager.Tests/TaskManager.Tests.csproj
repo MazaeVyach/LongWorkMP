@@ -44,6 +44,16 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TaskManager\TaskManager.csproj">
+      <Project>{07836C79-C9F7-41C0-943E-7B6256336459}</Project>
+      <Name>TaskManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Task\Task.csproj">
+      <Project>{1909ac39-ed4d-4fe9-85d8-55b0c08e8366}</Project>
+      <Name>Task</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

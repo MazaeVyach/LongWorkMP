@@ -52,7 +52,7 @@
             CreateTaskQueue(5000);
         }
 
-        public bool GetTask(long taskSize, ref Task task)
+        public bool GetTask(ref Task task)
         {
             if (queue.Count == 0)
                 return false;
