@@ -152,9 +152,11 @@
                     // Здесь агент должен принять задание на выполнение.
 
                     // Отправляем диспетчеру вычисленный пароль.
-                    string password = "pass12";   // Здесь агент должен предоставить результаты вычислений.
-
-                    data = Encoding.Unicode.GetBytes(password);
+                    StringBuilder password = new StringBuilder();   // Здесь агент должен предоставить результаты вычислений.
+                    password.Append(task.RangeStart);
+                    password.Append(" - ");
+                    password.Append(task.RangeEnd);
+                    data = Encoding.Unicode.GetBytes(password.ToString());
 
                     networkStream.Write(data, 0, data.Length);
                 }

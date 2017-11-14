@@ -40,7 +40,7 @@
                 long taskSize = agentInfo.CoresCount * agentInfo.PasswordPerSecond * 5;
                 
 
-                while (_taskManager.GetTask(ref task))
+                while (_taskManager.GetTask(taskSize, ref task))
                 {
                     byte[] data = Encoding.Unicode.GetBytes(task.Serealize());
                     networkStream.Write(data, 0, data.Length);

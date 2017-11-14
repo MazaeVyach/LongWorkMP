@@ -15,7 +15,7 @@ namespace TaskManager.Tests
         {
             TaskManager taskManager = new TaskManager("aa", "zzz", "kolka - suchka");
             Task task = null;
-            while (taskManager.GetTask(ref task))
+            while (taskManager.GetTask(5000, ref task))
                 Console.Write(task.ToString());
         }
     }
