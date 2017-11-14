@@ -1,5 +1,4 @@
-﻿
-namespace Agent.Interface
+﻿namespace Agent.Interface
 {
     using System;
 

@@ -103,12 +103,20 @@
             throw new ApplicationException("Хэш не найден!");
         }
 
-        // Метод Взаимодействия с другими модулями
-
-        private const int Port = 8888;
+        /// <summary>
+        /// Адресс узла диспетчера заданий.
+        /// </summary>
         private const string Address = "127.0.0.1";
 
-        static public void Interworking()
+        /// <summary>
+        /// Порт указанного узла диспетчера заданий.
+        /// </summary>
+        private const int Port = 8888;
+
+        /// <summary>
+        /// Метод взаимодействия агента с диспетчером заданий.
+        /// </summary>
+        public static void Interworking()
         {
             TcpClient tcpClient = null;
 
@@ -116,9 +124,9 @@
             {
                 tcpClient = new TcpClient(Address, Port);
 
-                NetworkStream networkStream = tcpClient.GetStream();
+                NetworkStream networkStream = tcpClient.GetStream();    // Базовый поток данных для доступа к сети.
 
-                byte[] data = new byte[64]; // Буфер для получаемых/отправляемых данных.
+                byte[] data = new byte[128]; // Буфер для получаемых/отправляемых данных.
 
                 // Отправляем диспетчеру информацию об агенте.
                 AgentInformation agentInfo = new AgentInformation(4, 10555);   // Здесь Agent отправляет информацию о себе диспетчеру заданий.
@@ -144,7 +152,7 @@
                     // Здесь агент должен принять задание на выполнение.
 
                     // Отправляем диспетчеру вычисленный пароль.
-                    string password = "Kolya - hui";   // Здесь агент должен представить результаты вычислений.
+                    string password = "pass12";   // Здесь агент должен предоставить результаты вычислений.
 
                     data = Encoding.Unicode.GetBytes(password);
 
