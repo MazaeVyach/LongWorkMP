@@ -71,17 +71,6 @@
             return true;
         }
 
-        public bool FindPassword(ref string password)
-        {
-            while (true)
-            {
-
-                break;
-            }
-
-            return false;
-        }
-
         // Метод взаимодействия с клиентом.
 
         private const int Port = 8888;
