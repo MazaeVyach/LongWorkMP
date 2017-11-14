@@ -78,7 +78,6 @@
                 beginValue = endValue + 1;
             }
         }
-
-       
+   
     }
 }
