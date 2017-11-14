@@ -5,6 +5,8 @@
     using System.Net.Sockets;
     using System.Threading;
 
+    using Task;
+
     public class InterworkingTaskManager
     {
         /// <summary>
@@ -42,6 +44,12 @@
                     // Создаем новый поток для обслуживания нового клиента.
                     Thread clientThread = new Thread(agentObject.Process);
                     clientThread.Start();
+
+                   /* Task task = null;
+                    taskManager.GetTask(ref task);
+
+                    Console.WriteLine("Провалилось на задании: ", task);*/
+                    
                 }
             }
             catch (Exception ex)

@@ -1,5 +1,7 @@
 ﻿namespace TaskManager
 {
+    using System.Collections.Generic;
+
     using Alphabet;
     using Task;
 
@@ -45,7 +47,7 @@
             CreateTaskQueue(5000);
         }
 
-        public bool GetTask(long taskSize, ref Task task)
+        public bool GetTask(ref Task task)
         {
             if (queue.Count == 0)
                 return false;
@@ -73,7 +75,7 @@
                     endValue = this.endRange;
 
                 queue.Push(new Task(beginValue, endValue, md5Sum));
-                beginValue += endValue + 1;
+                beginValue = endValue + 1;
             }
         }
 

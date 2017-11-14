@@ -25,7 +25,8 @@
         public void Process()
         {
             NetworkStream networkStream = null; // Базовый поток данных для доступа к сети.
-            Task task = null;
+
+            Task task = null;   // Отправляемое задание.
 
             try
             {
@@ -39,7 +40,7 @@
                 long taskSize = agentInfo.CoresCount * agentInfo.PasswordPerSecond * 5;
                 
 
-                while (_taskManager.GetTask(taskSize, ref task))
+                while (_taskManager.GetTask(ref task))
                 {
                     byte[] data = Encoding.Unicode.GetBytes(task.Serealize());
                     networkStream.Write(data, 0, data.Length);
@@ -53,11 +54,11 @@
             }
             catch (Exception ex)
             {
-                /*
-                Task task1 = null;
-                _taskManager.GetTask(4, ref task1);
+                // Отправляем диспетчеру задание, во время 
+                // выполнения которого агент завершил свою работу.
+                _taskManager.PushTask(task);
+
                 Console.WriteLine("Провалилось на диапазоне {0} - {1}", task.RangeStart, task.RangeEnd);
-                */
 
                 Console.WriteLine(ex.Message);
             }

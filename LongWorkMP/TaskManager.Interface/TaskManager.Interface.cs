@@ -16,8 +16,9 @@
             string end = Console.ReadLine();
             Console.Write("Введите md5 свертку ");
             string md5Sum = Console.ReadLine();
-            Console.Write("Подождите идет подбор пароля...");
+      
             TaskManager taskManager = new TaskManager(begin, end, md5Sum);
+            Console.Write("Подождите идет подбор пароля...\n");
 
             InterworkingTaskManager interworkingTaskManager = new InterworkingTaskManager();
             interworkingTaskManager.Interworking(taskManager);
