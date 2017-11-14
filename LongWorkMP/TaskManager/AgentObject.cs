@@ -16,7 +16,7 @@
 
         private TaskManager _taskManager;
 
-        public AgentObject(TcpClient tcpClient, TaskManager  taskManager)
+        public AgentObject(TcpClient tcpClient, ref TaskManager taskManager)
         {
             Client = tcpClient;
             _taskManager = taskManager;
@@ -53,8 +53,12 @@
             }
             catch (Exception ex)
             {
-
+                /*
+                Task task1 = null;
+                _taskManager.GetTask(4, ref task1);
                 Console.WriteLine("Провалилось на диапазоне {0} - {1}", task.RangeStart, task.RangeEnd);
+                */
+
                 Console.WriteLine(ex.Message);
             }
             finally
@@ -76,7 +80,7 @@
         /// <returns>
         /// Строка, считанная из потока.
         /// </returns>
-        private string GetStrFromStream(NetworkStream networkStream)
+        private static string GetStrFromStream(NetworkStream networkStream)
         {
             byte[] bytesBuffer = new byte[128];  // Буфер байтов получаемых данных.
             StringBuilder dataStr = new StringBuilder();    // Строка получаемых данных.
