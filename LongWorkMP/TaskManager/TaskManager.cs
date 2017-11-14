@@ -31,6 +31,8 @@
 
         private Alphabet alphabet;
 
+        private Stack<Task> queue;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskManager"/> class.
         /// </summary>
@@ -47,39 +49,39 @@
             this.curentValue = this.beginRange;
             this.endRange = this.alphabet.StringToNumber(endRange);
             this.md5Sum = md5Sum;
+            CreateTaskQueue(5000);
         }
 
         public bool GetTask(long taskSize, ref Task task)
         {
-            long beginValue = this.curentValue;
-            long endValue = beginValue + taskSize;
-
-            if (this.curentValue > this.endRange)
-            {
-                task = new Task(this.endRange, this.endRange, this.md5Sum);
+            if (queue.Count == 0)
                 return false;
-            }
 
-            if (endValue > this.endRange)
-            {
-                endValue = this.endRange;
-            }
-
-            this.curentValue = endValue + 1;
-            task = new Task(beginValue, endValue, this.md5Sum);
+            task = this.queue.Pop();
 
             return true;
         }
 
-        public bool FindPassword(ref string password)
+        public void PushTask(Task task)
         {
-            while (true)
+            queue.Push(task);
+        }
+
+        public void CreateTaskQueue(long taskSize)
+        {
+            long beginValue = curentValue;
+            queue = new Stack<Task>();
+
+            while (beginValue <= endRange)
             {
+                long endValue = beginValue + taskSize;
 
-                break;
+                if (endValue > this.endRange)
+                    endValue = this.endRange;
+
+                queue.Push(new Task(beginValue, endValue, md5Sum));
+                beginValue += endValue + 1;
             }
-
-            return false;
         }
 
         /// <summary>

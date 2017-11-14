@@ -14,7 +14,7 @@
     {
         public TcpClient Client;
 
-        private readonly TaskManager _taskManager;
+        private TaskManager _taskManager;
 
         public AgentObject(TcpClient tcpClient, TaskManager  taskManager)
         {
@@ -53,6 +53,7 @@
             }
             catch (Exception ex)
             {
+
                 Console.WriteLine("Провалилось на диапазоне {0} - {1}", task.RangeStart, task.RangeEnd);
                 Console.WriteLine(ex.Message);
             }
