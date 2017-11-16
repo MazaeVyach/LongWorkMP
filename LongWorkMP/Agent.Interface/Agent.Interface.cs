@@ -8,6 +8,7 @@
         {
             Console.WriteLine("This is Agent Interface!");
             Agent.Interworking();
+            // отредактировать интерворкинг- создать видимость работы
         }
     }
 }

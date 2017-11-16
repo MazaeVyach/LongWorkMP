@@ -1,6 +1,7 @@
 ﻿namespace Agent
 {
     using System;
+    using System.Diagnostics;
     using System.Text;
     using System.Net.Sockets;
     using System.Security.Cryptography;
@@ -14,6 +15,43 @@
     /// </summary>
     public class Agent
     {
+        /// <summary>
+        /// Функция возвращает производительнсоть в количестве вычисляемых паролей в секунду.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        public long GetProductivity()
+        {
+            // 100000 паролей из начала среднего диапазона
+            long startRange = 2113663;
+            long endRange = 2213663;
+            // для слова "AGNf" - последнее в этом диапазоне
+            string knownHash = "3742009787090f073b14d9d3b8302ee0"; 
+
+            // класс для точного измерения времемни
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            BruteForce(startRange, endRange, knownHash);
+
+            watch.Stop();
+
+            long result = (endRange - startRange) / watch.ElapsedMilliseconds * 1000;
+            return result;
+        }
+
+        /// <summary>
+        /// Функция возвращает количество процессоров(вычислительных ядер) у многоядерного центрального процессора агента.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int GetCores()
+        {
+            return Environment.ProcessorCount;
+        }
+        
         private Alphabet myAplf = new Alphabet();
 
         /// <summary>
@@ -102,6 +140,7 @@
 
             throw new ApplicationException("Хэш не найден!");
         }
+        
 
         /// <summary>
         /// Адресс узла диспетчера заданий.
@@ -150,15 +189,20 @@
                     Task task = Task.Deserealize(message.ToString());
 
                     // Здесь агент должен принять задание на выполнение.
-
+                    // !!! делить задачу на потоки исходя из колва ядер. 
+                    // сделать разбиение диапазона на колво ядер
+                    // запускать потоками и в каждом потоке считать свой диапазон
                     // Отправляем диспетчеру вычисленный пароль.
+
+                    // отправлять пустую стркоу в случае не нахождения пароля в заданном диаапазоне по свертуе
+
                     StringBuilder password = new StringBuilder();   // Здесь агент должен предоставить результаты вычислений.
                     password.Append(task.RangeStart);
                     password.Append(" - ");
                     password.Append(task.RangeEnd);
                     data = Encoding.Unicode.GetBytes(password.ToString());
 
-                    networkStream.Write(data, 0, data.Length);
+                    networkStream.Write(data, 0, data.Length); // собстна передача
                 }
             }
             catch (Exception ex)

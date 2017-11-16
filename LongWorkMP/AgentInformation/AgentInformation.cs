@@ -14,7 +14,7 @@
         /// <param name="passwordPerSecond"> Количество подбираемых паролей в секунду одним ядром. </param>
         public AgentInformation(long coresCount, long passwordPerSecond)
         {
-            CoresCount = coresCount;
+            CoresCount = coresCount; // agent.GetCores()
             PasswordPerSecond = passwordPerSecond;
         }
 
