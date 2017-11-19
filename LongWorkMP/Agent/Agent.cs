@@ -2,12 +2,15 @@
 {
     using System;
     using System.Diagnostics;
-    using System.Text;
     using System.Net.Sockets;
     using System.Security.Cryptography;
+    using System.Text;
+    using System.Threading;
+
+    using AgentInformation;
 
     using Alphabet;
-    using AgentInformation;
+
     using Task;
 
     /// <summary>
@@ -15,44 +18,17 @@
     /// </summary>
     public class Agent
     {
-        /// <summary>
-        /// Функция возвращает производительнсоть в количестве вычисляемых паролей в секунду.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="long"/>.
-        /// </returns>
-        public long GetProductivity()
-        {
-            // 100000 паролей из начала среднего диапазона
-            long startRange = 2113663;
-            long endRange = 2213663;
-            // для слова "AGNf" - последнее в этом диапазоне
-            string knownHash = "3742009787090f073b14d9d3b8302ee0"; 
-
-            // класс для точного измерения времемни
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            BruteForce(startRange, endRange, knownHash);
-
-            watch.Stop();
-
-            long result = (endRange - startRange) / watch.ElapsedMilliseconds * 1000;
-            return result;
-        }
-
-        /// <summary>
-        /// Функция возвращает количество процессоров(вычислительных ядер) у многоядерного центрального процессора агента.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        public int GetCores()
-        {
-            return Environment.ProcessorCount;
-        }
-        
         private Alphabet myAplf = new Alphabet();
+        
+        /// <summary>
+        /// Адресс узла диспетчера заданий.
+        /// </summary>
+        private const string Address = "127.0.0.1";
+
+        /// <summary>
+        /// Порт указанного узла диспетчера заданий.
+        /// </summary>
+        private const int Port = 8888;
 
         /// <summary>
         /// Получение MD5 хэша.
@@ -69,19 +45,19 @@
         public static string CreateMd5Hash(MD5 md5Hash, string input)
         {
             // Convert the input string to a byte array and compute the hash.
-                byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
 
-                // Create a new Stringbuilder to collect the bytes
-                // and create a string.
-                StringBuilder sBuilder = new StringBuilder();
+            // Create a new Stringbuilder to collect the bytes
+            // and create a string.
+            StringBuilder sBuilder = new StringBuilder();
 
-                // Loop through each byte of the hashed data 
-                // and format each one as a hexadecimal string.
-                for (int i = 0; i < data.Length; i++)
-                    sBuilder.Append(data[i].ToString("x2"));
+            // Loop through each byte of the hashed data 
+            // and format each one as a hexadecimal string.
+            for (int i = 0; i < data.Length; i++)
+                sBuilder.Append(data[i].ToString("x2"));
 
-                // Return the hexadecimal string.
-                return sBuilder.ToString();
+            // Return the hexadecimal string.
+            return sBuilder.ToString();
         }
 
         /// <summary>
@@ -140,17 +116,119 @@
 
             throw new ApplicationException("Хэш не найден!");
         }
-        
 
         /// <summary>
-        /// Адресс узла диспетчера заданий.
+        /// Функция возвращает производительнсоть в количестве вычисляемых паролей в секунду.
         /// </summary>
-        private const string Address = "127.0.0.1";
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        public long GetProductivity()
+        {
+            // 100000 паролей из начала среднего диапазона
+            long startRange = 2113663;
+            long endRange  =  2213663;
+            // для слова "AGNf" - последнее в этом диапазоне
+            string knownHash = "3742009787090f073b14d9d3b8302ee0"; 
+
+            // класс для точного измерения времемни
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            BruteForce(startRange, endRange, knownHash);
+
+            watch.Stop();
+
+            long result = (endRange - startRange) / watch.ElapsedMilliseconds * 1000;
+            return result;
+        }
 
         /// <summary>
-        /// Порт указанного узла диспетчера заданий.
+        /// Функция возвращает количество процессоров(вычислительных ядер) у многоядерного центрального процессора агента.
         /// </summary>
-        private const int Port = 8888;
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int GetCores()
+        {
+            return Environment.ProcessorCount;
+        }
+
+        /// <summary>
+        /// Возвращает количество чисел в блоках, кроме последнего блока.
+        /// </summary>
+        /// <param name="StartNumber">
+        /// Начало диапазона задачи.
+        /// </param>
+        /// <param name="EndNumber">
+        /// Конец диапазона задачи.
+        /// </param>
+        /// <param name="cores">
+        /// Количество вычислительных ядер.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        public static long GetNumbersInOtherBlocks(long StartNumber, long EndNumber, int cores)
+        {
+            long diapason = EndNumber - StartNumber + 1;
+
+            // колво чисел в последнем блоке
+            long numbersInLastBlock = (long)Math.Floor((double)diapason / cores);
+
+            diapason -= numbersInLastBlock;
+            // колво чисел в оставшихся блоках для потоков
+            long numbersInOtherBlocks = diapason / (cores - 1);
+            return numbersInOtherBlocks;
+        }
+
+        /// <summary>
+        /// Вычислить первое число в заданном блоке распараллеливания.
+        /// </summary>
+        /// <param name="StartNumber">
+        /// Начало диапазона задачи.
+        /// </param>
+        /// <param name="NumbersInOtherBlocks">
+        /// Количество чисел в блоках, кроме последнего блока.
+        /// </param>
+        /// <param name="NumberOfRange">
+        /// Номер выбранного блока распараллеливания.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        public static long GetStartRange(long StartNumber, long NumbersInOtherBlocks, int NumberOfRange)
+        {
+            long firstNumberInRange = StartNumber + NumbersInOtherBlocks * NumberOfRange; // первый элемент в блоке
+            return firstNumberInRange;
+        }
+
+        /// <summary>
+        /// Возвращает последнее число в заданном блоке распараллеливания.
+        /// </summary>
+        /// <param name="startNumber">
+        /// Начало диапазона задачи.
+        /// </param>
+        /// <param name="numbersInOtherBlocks">
+        /// Количество чисел в блоках, кроме последнего блока.
+        /// </param>
+        /// <param name="cores">
+        /// Количество вычислительных ядер
+        /// </param>
+        /// <param name="NumberOfRange">
+        /// Номер выбранного блока распараллеливания.
+        /// </param>
+        /// <returns>
+        /// The <see cref="long"/>.
+        /// </returns>
+        public static long GetEndRange(long startNumber, long numbersInOtherBlocks, int cores, int NumberOfRange)
+        {
+            long firstNumberInNextRange = startNumber + numbersInOtherBlocks * (NumberOfRange + 1); //число следующее за нужным
+            //если это последнее число в последнем блоке, в котором на один меньше всегда
+            if (NumberOfRange == cores - 1)
+                return firstNumberInNextRange - 2;
+            return firstNumberInNextRange - 1; //последний элемент в блоке
+        }
 
         /// <summary>
         /// Метод взаимодействия агента с диспетчером заданий.
@@ -158,7 +236,7 @@
         public static void Interworking()
         {
             TcpClient tcpClient = null;
-
+            Agent agent = new Agent();
             try
             {
                 tcpClient = new TcpClient(Address, Port);
@@ -168,7 +246,7 @@
                 byte[] data = new byte[128]; // Буфер для получаемых/отправляемых данных.
 
                 // Отправляем диспетчеру информацию об агенте.
-                AgentInformation agentInfo = new AgentInformation(4, 10555);   // Здесь Agent отправляет информацию о себе диспетчеру заданий.
+                AgentInformation agentInfo = new AgentInformation(agent.GetCores(), agent.GetProductivity());   // Здесь Agent отправляет информацию о себе диспетчеру заданий.
 
                 data = Encoding.Unicode.GetBytes(agentInfo.Serealize());
 
@@ -187,6 +265,39 @@
                     } while (networkStream.DataAvailable);
 
                     Task task = Task.Deserealize(message.ToString());
+                    
+                    // !!!!!!!!!!!!!Блок обработки задания !!!!!!!!!!!!//
+                    // будет вынесено как отдельная функция
+                    int cores = agent.GetCores();
+                    long numbersInOtherBlocks = GetNumbersInOtherBlocks(task.RangeStart, task.RangeEnd, cores);
+
+                    for (int i = 0; i < agent.GetCores(); ++i)
+                    {
+                        Thread t = new Thread(
+                            () =>
+                                {
+                                    long startNumberForBrute = GetStartRange(task.RangeStart, numbersInOtherBlocks, i);
+                                    long endNumberForBrute = GetEndRange(task.RangeStart, numbersInOtherBlocks, cores, i) + 1;
+                                    string result = agent.BruteForce(startNumberForBrute, endNumberForBrute, task.Md5Sum);
+                                    
+                                    // if(result != String.Empty)
+                                       // t.Abort();
+
+                                        /*Console.WriteLine("hello from thread number {0}", i);
+                                    for (long curNumber = GetStartRange(task.RangeStart, numbersInOtherBlocks, i);
+                                         curNumber < GetEndRange(task.RangeStart, numbersInOtherBlocks, cores, i) + 1;
+                                         ++curNumber)
+                                    {
+                                        
+                                        Console.WriteLine("Here are my numbers: {0}", curNumber);
+                                    }*/
+                                });
+                        t.Start();
+                        t.Join();
+                    }
+
+                    // РАСПАРАЛЛЕЛИТЬ ЗДЕСЬ
+                    // написав метод Параллельные вычисления(Task task)
 
                     // Здесь агент должен принять задание на выполнение.
                     // !!! делить задачу на потоки исходя из колва ядер. 
@@ -196,16 +307,17 @@
 
                     // отправлять пустую стркоу в случае не нахождения пароля в заданном диаапазоне по свертуе
 
-                    StringBuilder password = new StringBuilder();   // Здесь агент должен предоставить результаты вычислений.
+                    /*StringBuilder password = new StringBuilder();   // Здесь агент должен предоставить результаты вычислений.
                     password.Append(task.RangeStart);
                     password.Append(" - ");
-                    password.Append(task.RangeEnd);
-                    data = Encoding.Unicode.GetBytes(password.ToString());
+                    password.Append(task.RangeEnd);*/
+
+                    //data = Encoding.Unicode.GetBytes(password.ToString());
 
                     networkStream.Write(data, 0, data.Length); // собстна передача
                 }
             }
-            catch (Exception ex)
+            catch (ApplicationException ex)
             {
                 Console.WriteLine(ex.Message);
             }

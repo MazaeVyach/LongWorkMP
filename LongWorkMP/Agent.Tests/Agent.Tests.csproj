@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="BruteForce.Tests.cs" />
     <Compile Include="MD5.Tests.cs" />
+    <Compile Include="ParallelComputing.cs" />
     <Compile Include="Productivity.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

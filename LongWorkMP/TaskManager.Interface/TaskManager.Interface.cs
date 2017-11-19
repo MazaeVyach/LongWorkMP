@@ -7,7 +7,6 @@
 
     public class Program
     {
-
         private static void Main(string[] args)
         {
             Console.Write("Введите начало диапазона ");

@@ -27,9 +27,7 @@ namespace Agent.Tests
         [Test]
         public void PasswordsPerSecond()
         {
-            long passwordsPerSecond = 0;
-           // Assert.That(PasswordsPerSecond, Is.EqualTo(this.myAgent.GetProductivity()));
-            
+            //Assert.That(0, Is.EqualTo(this.myAgent.GetProductivity()));
         }
 
         /// <summary>
@@ -38,8 +36,7 @@ namespace Agent.Tests
         [Test]
         public void CoresAmount()
         {
-            long cores = 4;
-            //Assert.That(cores, Is.EqualTo(this.myAgent.GetCores()));
+            //Assert.That(4, Is.EqualTo(this.myAgent.GetCores()));
         }
     }
 }
