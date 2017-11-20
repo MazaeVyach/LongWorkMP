@@ -30,6 +30,8 @@
         /// </summary>
         private const int Port = 8888;
 
+        static string result;
+
         /// <summary>
         /// Получение MD5 хэша.
         /// </summary>
@@ -111,10 +113,7 @@
                     result = currentString;
             }
 
-            if (result != string.Empty)
-                return result;
-
-            throw new ApplicationException("Хэш не найден!");
+            return result;
         }
 
         /// <summary>
@@ -237,94 +236,119 @@
         {
             TcpClient tcpClient = null;
             Agent agent = new Agent();
-            try
+
+            while (true)
             {
-                tcpClient = new TcpClient(Address, Port);
-
-                NetworkStream networkStream = tcpClient.GetStream();    // Базовый поток данных для доступа к сети.
-
-                byte[] data = new byte[128]; // Буфер для получаемых/отправляемых данных.
-
-                // Отправляем диспетчеру информацию об агенте.
-                AgentInformation agentInfo = new AgentInformation(agent.GetCores(), agent.GetProductivity());   // Здесь Agent отправляет информацию о себе диспетчеру заданий.
-
-                data = Encoding.Unicode.GetBytes(agentInfo.Serealize());
-
-                networkStream.Write(data, 0, data.Length);
-
-                while (true)
+                try
                 {
-                    // Получаем задание от диспетчера заданий.
-                    StringBuilder message = new StringBuilder();
+                    Console.WriteLine("Попытка подключиться к {0}:{1}", Address, Port);
 
-                    do
+                    tcpClient = new TcpClient(Address, Port);
+
+                    NetworkStream networkStream = tcpClient.GetStream(); // Базовый поток данных для доступа к сети.
+
+                    byte[] data = new byte[128]; // Буфер для получаемых/отправляемых данных.
+
+                    // Отправляем диспетчеру информацию об агенте.
+                    AgentInformation agentInfo = new AgentInformation(agent.GetCores(), agent.GetProductivity());
+                        // Здесь Agent отправляет информацию о себе диспетчеру заданий.
+
+                    data = Encoding.Unicode.GetBytes(agentInfo.Serealize());
+
+                    networkStream.Write(data, 0, data.Length);
+
+                    while (true)
                     {
-                        int bytesCount = networkStream.Read(data, 0, data.Length);
-                        message.Append(Encoding.Unicode.GetString(data, 0, bytesCount));
+                        // Получаем задание от диспетчера заданий.
+                        StringBuilder message = new StringBuilder();
 
-                    } while (networkStream.DataAvailable);
+                        do
+                        {
+                            int bytesCount = networkStream.Read(data, 0, data.Length);
+                            message.Append(Encoding.Unicode.GetString(data, 0, bytesCount));
 
-                    Task task = Task.Deserealize(message.ToString());
-                    
-                    // !!!!!!!!!!!!!Блок обработки задания !!!!!!!!!!!!//
-                    // будет вынесено как отдельная функция
-                    int cores = agent.GetCores();
-                    long numbersInOtherBlocks = GetNumbersInOtherBlocks(task.RangeStart, task.RangeEnd, cores);
+                        }
+                        while (networkStream.DataAvailable);
 
-                    for (int i = 0; i < agent.GetCores(); ++i)
-                    {
-                        Thread t = new Thread(
-                            () =>
-                                {
-                                    long startNumberForBrute = GetStartRange(task.RangeStart, numbersInOtherBlocks, i);
-                                    long endNumberForBrute = GetEndRange(task.RangeStart, numbersInOtherBlocks, cores, i) + 1;
-                                    string result = agent.BruteForce(startNumberForBrute, endNumberForBrute, task.Md5Sum);
-                                    
-                                    // if(result != String.Empty)
-                                       // t.Abort();
+                        Task task = Task.Deserealize(message.ToString());
+
+                        // !!!!!!!!!!!!!Блок обработки задания !!!!!!!!!!!!//
+                        // будет вынесено как отдельная функция
+                        int cores = agent.GetCores();
+                        long numbersInOtherBlocks = GetNumbersInOtherBlocks(task.RangeStart, task.RangeEnd, cores);
+                        result = "КИРСОН ХУЕСОС";
+
+                        for (int i = 0; i < agent.GetCores(); ++i)
+                        {
+                            Thread t = new Thread(
+                                () =>
+                                    {
+                                        long startNumberForBrute = GetStartRange(
+                                            task.RangeStart,
+                                            numbersInOtherBlocks,
+                                            i);
+                                        long endNumberForBrute = GetEndRange(
+                                            task.RangeStart,
+                                            numbersInOtherBlocks,
+                                            cores,
+                                            i) + 1;
+                                        string pas = agent.BruteForce(
+                                            startNumberForBrute,
+                                            endNumberForBrute,
+                                            task.Md5Sum);
+
+                                        if (pas != String.Empty)
+                                            result = pas;
+
+                                        // if(result != String.Empty)
+                                        // t.Abort();
 
                                         /*Console.WriteLine("hello from thread number {0}", i);
-                                    for (long curNumber = GetStartRange(task.RangeStart, numbersInOtherBlocks, i);
-                                         curNumber < GetEndRange(task.RangeStart, numbersInOtherBlocks, cores, i) + 1;
-                                         ++curNumber)
-                                    {
-                                        
-                                        Console.WriteLine("Here are my numbers: {0}", curNumber);
-                                    }*/
-                                });
-                        t.Start();
-                        t.Join();
+                                        for (long curNumber = GetStartRange(task.RangeStart, numbersInOtherBlocks, i);
+                                             curNumber < GetEndRange(task.RangeStart, numbersInOtherBlocks, cores, i) + 1;
+                                             ++curNumber)
+                                        {
+
+                                            Console.WriteLine("Here are my numbers: {0}", curNumber);
+                                        }*/
+                                    });
+                            t.Start();
+                            t.Join();
+                        }
+
+                        // РАСПАРАЛЛЕЛИТЬ ЗДЕСЬ
+                        // написав метод Параллельные вычисления(Task task)
+
+                        // Здесь агент должен принять задание на выполнение.
+                        // !!! делить задачу на потоки исходя из колва ядер. 
+                        // сделать разбиение диапазона на колво ядер
+                        // запускать потоками и в каждом потоке считать свой диапазон
+                        // Отправляем диспетчеру вычисленный пароль.
+
+                        // отправлять пустую стркоу в случае не нахождения пароля в заданном диаапазоне по свертуе
+
+                        StringBuilder password = new StringBuilder();   // Здесь агент должен предоставить результаты вычислений.
+                        password.Append(task.RangeStart);
+                        password.Append(" - ");
+                        password.Append(task.RangeEnd);
+                        Console.WriteLine(password);
+
+                        data = Encoding.Unicode.GetBytes(result.ToString());
+
+                        networkStream.Write(data, 0, data.Length); // собстна передача
                     }
-
-                    // РАСПАРАЛЛЕЛИТЬ ЗДЕСЬ
-                    // написав метод Параллельные вычисления(Task task)
-
-                    // Здесь агент должен принять задание на выполнение.
-                    // !!! делить задачу на потоки исходя из колва ядер. 
-                    // сделать разбиение диапазона на колво ядер
-                    // запускать потоками и в каждом потоке считать свой диапазон
-                    // Отправляем диспетчеру вычисленный пароль.
-
-                    // отправлять пустую стркоу в случае не нахождения пароля в заданном диаапазоне по свертуе
-
-                    /*StringBuilder password = new StringBuilder();   // Здесь агент должен предоставить результаты вычислений.
-                    password.Append(task.RangeStart);
-                    password.Append(" - ");
-                    password.Append(task.RangeEnd);*/
-
-                    //data = Encoding.Unicode.GetBytes(password.ToString());
-
-                    networkStream.Write(data, 0, data.Length); // собстна передача
                 }
-            }
-            catch (ApplicationException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                if (tcpClient != null)
-                    tcpClient.Close();
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Попытка неудалось подключиться к серверу");
+                    //Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    if (tcpClient != null)
+                        tcpClient.Close();
+                }
+                Thread.Sleep(5000);
             }
         }
     }

@@ -39,7 +39,6 @@
                 // Здесь TaskManager заносит себе куда-то информацию о данном агента.
                 long taskSize = agentInfo.CoresCount * agentInfo.PasswordPerSecond * 5;
                 
-
                 while (_taskManager.GetTask(taskSize, ref task))
                 {
                     byte[] data = Encoding.Unicode.GetBytes(task.Serealize());
@@ -47,7 +46,11 @@
 
                     // Получаем информацию о подобранном пароле.
                     string password = GetStrFromStream(networkStream);  // Результат работы агента.
-                    Console.WriteLine(password);
+
+                    if (password == "КИРСОН ХУЕСОС")
+                        Console.WriteLine("На диапазоне {0} - {1} не найдено пароля", task.RangeStart, task.RangeEnd);
+                    else
+                        Console.WriteLine(password);
                     // Здесь TaskManager обрабатывает результат работы агента.
 
                 }
