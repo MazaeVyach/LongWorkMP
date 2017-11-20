@@ -4,6 +4,7 @@
     using System.Text;
     using System.Net.Sockets;
     using System.Security.Cryptography;
+    using System.Threading;
 
     using Alphabet;
     using AgentInformation;
@@ -156,8 +157,9 @@
                     password.Append(task.RangeStart);
                     password.Append(" - ");
                     password.Append(task.RangeEnd);
+                    Console.WriteLine(password);
                     data = Encoding.Unicode.GetBytes(password.ToString());
-
+                    Thread.Sleep(2000);
                     networkStream.Write(data, 0, data.Length);
                 }
             }
