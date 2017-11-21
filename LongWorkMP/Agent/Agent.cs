@@ -30,7 +30,10 @@
         /// </summary>
         private const int Port = 8888;
 
-        static string result;
+        /// <summary>
+        /// Исходная строка, для которой применялся BruteForce.
+        /// </summary>
+        private static string initialString;
 
         /// <summary>
         /// Получение MD5 хэша.
@@ -230,6 +233,41 @@
         }
 
         /// <summary>
+        /// Параллельные вычисления.
+        /// </summary>
+        /// <param name="givenTask">
+        /// Переданная задача.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string ParallelComputing(Task givenTask)
+        {
+            Agent agent = new Agent();
+            int cores = agent.GetCores();
+            long numbersInOtherBlocks = GetNumbersInOtherBlocks(givenTask.RangeStart, givenTask.RangeEnd, cores);
+            initialString = "----------";
+
+            for (int i = 0; i < agent.GetCores(); ++i)
+            {
+                Thread t = new Thread(
+                    () =>
+                        {
+                            long startNumberForBrute = GetStartRange(givenTask.RangeStart, numbersInOtherBlocks, i);
+                            long endNumberForBrute = GetEndRange(givenTask.RangeStart, numbersInOtherBlocks, cores, i) + 1;
+                            string pas = agent.BruteForce(startNumberForBrute, endNumberForBrute, givenTask.Md5Sum);
+
+                            if (pas != String.Empty)
+                                initialString = pas;
+                        });
+                t.Start();
+                t.Join();
+            }
+
+            return initialString;
+        }
+
+        /// <summary>
         /// Метод взаимодействия агента с диспетчером заданий.
         /// </summary>
         public static void Interworking()
@@ -251,7 +289,7 @@
 
                     // Отправляем диспетчеру информацию об агенте.
                     AgentInformation agentInfo = new AgentInformation(agent.GetCores(), agent.GetProductivity());
-                        // Здесь Agent отправляет информацию о себе диспетчеру заданий.
+                    // Здесь Agent отправляет информацию о себе диспетчеру заданий.
 
                     data = Encoding.Unicode.GetBytes(agentInfo.Serealize());
 
@@ -271,71 +309,19 @@
                         while (networkStream.DataAvailable);
 
                         Task task = Task.Deserealize(message.ToString());
+                        //Вычисление строки
+                        initialString = ParallelComputing(task);
 
-                        // !!!!!!!!!!!!!Блок обработки задания !!!!!!!!!!!!//
-                        // будет вынесено как отдельная функция
-                        int cores = agent.GetCores();
-                        long numbersInOtherBlocks = GetNumbersInOtherBlocks(task.RangeStart, task.RangeEnd, cores);
-                        result = "КИРСОН ХУЕСОС";
-
-                        for (int i = 0; i < agent.GetCores(); ++i)
-                        {
-                            Thread t = new Thread(
-                                () =>
-                                    {
-                                        long startNumberForBrute = GetStartRange(
-                                            task.RangeStart,
-                                            numbersInOtherBlocks,
-                                            i);
-                                        long endNumberForBrute = GetEndRange(
-                                            task.RangeStart,
-                                            numbersInOtherBlocks,
-                                            cores,
-                                            i) + 1;
-                                        string pas = agent.BruteForce(
-                                            startNumberForBrute,
-                                            endNumberForBrute,
-                                            task.Md5Sum);
-
-                                        if (pas != String.Empty)
-                                            result = pas;
-
-                                        // if(result != String.Empty)
-                                        // t.Abort();
-
-                                        /*Console.WriteLine("hello from thread number {0}", i);
-                                        for (long curNumber = GetStartRange(task.RangeStart, numbersInOtherBlocks, i);
-                                             curNumber < GetEndRange(task.RangeStart, numbersInOtherBlocks, cores, i) + 1;
-                                             ++curNumber)
-                                        {
-
-                                            Console.WriteLine("Here are my numbers: {0}", curNumber);
-                                        }*/
-                                    });
-                            t.Start();
-                            t.Join();
-                        }
-
-                        // РАСПАРАЛЛЕЛИТЬ ЗДЕСЬ
-                        // написав метод Параллельные вычисления(Task task)
-
-                        // Здесь агент должен принять задание на выполнение.
-                        // !!! делить задачу на потоки исходя из колва ядер. 
-                        // сделать разбиение диапазона на колво ядер
-                        // запускать потоками и в каждом потоке считать свой диапазон
-                        // Отправляем диспетчеру вычисленный пароль.
-
-                        // отправлять пустую стркоу в случае не нахождения пароля в заданном диаапазоне по свертуе
-
-                        StringBuilder password = new StringBuilder();   // Здесь агент должен предоставить результаты вычислений.
+                        // Здесь агент предоставляет результаты вычислений.
+                        StringBuilder password = new StringBuilder();   
                         password.Append(task.RangeStart);
                         password.Append(" - ");
                         password.Append(task.RangeEnd);
-                        Console.WriteLine(password);
 
-                        data = Encoding.Unicode.GetBytes(result.ToString());
+                        data = Encoding.Unicode.GetBytes(initialString.ToString());
 
-                        networkStream.Write(data, 0, data.Length); // собстна передача
+                        // Сама передача
+                        networkStream.Write(data, 0, data.Length); 
                     }
                 }
                 catch (Exception ex)
@@ -348,6 +334,7 @@
                     if (tcpClient != null)
                         tcpClient.Close();
                 }
+                
                 Thread.Sleep(5000);
             }
         }

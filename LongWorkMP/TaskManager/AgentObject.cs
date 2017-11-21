@@ -47,10 +47,10 @@
                     // Получаем информацию о подобранном пароле.
                     string password = GetStrFromStream(networkStream);  // Результат работы агента.
 
-                    if (password == "КИРСОН ХУЕСОС")
+                    if (password == "----------")
                         Console.WriteLine("На диапазоне {0} - {1} не найдено пароля", task.RangeStart, task.RangeEnd);
                     else
-                        Console.WriteLine(password);
+                        Console.WriteLine("Найденный пароль {0}", password);
                     // Здесь TaskManager обрабатывает результат работы агента.
 
                 }

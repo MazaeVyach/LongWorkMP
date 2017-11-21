@@ -3,6 +3,8 @@
     using System;
     using NUnit.Framework;
 
+    using Task;
+
     /// <summary>
     /// Пробные тесты для нахождения продуктивности на каждой конкретной машине
     /// Никогда выполняться не будут!!!
@@ -50,6 +52,22 @@
             Assert.That(135, Is.EqualTo(Agent.GetEndRange(startNumber, numbersInOtherBlocks, cores, 1)));
             Assert.That(143, Is.EqualTo(Agent.GetEndRange(startNumber, numbersInOtherBlocks, cores, 2)));
             Assert.That(150, Is.EqualTo(Agent.GetEndRange(startNumber, numbersInOtherBlocks, cores, 3)));
+        }
+
+        /// <summary>
+        /// Тесты на параллельные вычисления.
+        /// </summary>
+        [Test]
+        public void ParallelTest()
+        {
+            Agent myAgent = new Agent();
+            string pswd = "a";
+            long rangeStart = 0;
+            long rangeEnd = 10000;
+            string md5 = "0cc175b9c0f1b6a831c399e269772661";
+            Task testTask = new Task(rangeStart, rangeEnd, md5);
+
+            Assert.That(pswd, Is.EqualTo(Agent.ParallelComputing(testTask)));
         }
     }
 }
