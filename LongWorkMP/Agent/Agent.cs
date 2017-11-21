@@ -8,9 +8,7 @@
     using System.Threading;
 
     using AgentInformation;
-
     using Alphabet;
-
     using Task;
 
     /// <summary>
@@ -19,21 +17,6 @@
     public class Agent
     {
         private Alphabet myAplf = new Alphabet();
-        
-        /// <summary>
-        /// Адресс узла диспетчера заданий.
-        /// </summary>
-        private const string Address = "127.0.0.1";
-
-        /// <summary>
-        /// Порт указанного узла диспетчера заданий.
-        /// </summary>
-        private const int Port = 8888;
-
-        /// <summary>
-        /// Исходная строка, для которой применялся BruteForce.
-        /// </summary>
-        private static string initialString;
 
         /// <summary>
         /// Получение MD5 хэша.
@@ -106,7 +89,7 @@
             for (long i = startRange; i <= endRange; ++i)
             {
                 // известная строка на каждой итерации
-                string currentString = this.myAplf.NumberToString(i);
+                string currentString = myAplf.NumberToString(i);
 
                 // хэш от строки на каждой итерации
                 string currentHash = GetHash(currentString);
@@ -120,7 +103,7 @@
         }
 
         /// <summary>
-        /// Функция возвращает производительнсоть в количестве вычисляемых паролей в секунду.
+        /// Функция возвращает производительность в количестве вычисляемых паролей в секунду.
         /// </summary>
         /// <returns>
         /// The <see cref="long"/>.
@@ -146,7 +129,8 @@
         }
 
         /// <summary>
-        /// Функция возвращает количество процессоров(вычислительных ядер) у многоядерного центрального процессора агента.
+        /// Функция возвращает количество процессоров(вычислительных ядер) 
+        /// у многоядерного центрального процессора агента.
         /// </summary>
         /// <returns>
         /// The <see cref="int"/>.
@@ -159,10 +143,10 @@
         /// <summary>
         /// Возвращает количество чисел в блоках, кроме последнего блока.
         /// </summary>
-        /// <param name="StartNumber">
+        /// <param name="startNumber">
         /// Начало диапазона задачи.
         /// </param>
-        /// <param name="EndNumber">
+        /// <param name="endNumber">
         /// Конец диапазона задачи.
         /// </param>
         /// <param name="cores">
@@ -171,9 +155,9 @@
         /// <returns>
         /// The <see cref="long"/>.
         /// </returns>
-        public static long GetNumbersInOtherBlocks(long StartNumber, long EndNumber, int cores)
+        public static long GetNumbersInOtherBlocks(long startNumber, long endNumber, int cores)
         {
-            long diapason = EndNumber - StartNumber + 1;
+            long diapason = endNumber - startNumber + 1;
 
             // колво чисел в последнем блоке
             long numbersInLastBlock = (long)Math.Floor((double)diapason / cores);
@@ -187,21 +171,21 @@
         /// <summary>
         /// Вычислить первое число в заданном блоке распараллеливания.
         /// </summary>
-        /// <param name="StartNumber">
+        /// <param name="startNumber">
         /// Начало диапазона задачи.
         /// </param>
-        /// <param name="NumbersInOtherBlocks">
+        /// <param name="numbersInOtherBlocks">
         /// Количество чисел в блоках, кроме последнего блока.
         /// </param>
-        /// <param name="NumberOfRange">
+        /// <param name="numberOfRange">
         /// Номер выбранного блока распараллеливания.
         /// </param>
         /// <returns>
         /// The <see cref="long"/>.
         /// </returns>
-        public static long GetStartRange(long StartNumber, long NumbersInOtherBlocks, int NumberOfRange)
+        public static long GetStartRange(long startNumber, long numbersInOtherBlocks, int numberOfRange)
         {
-            long firstNumberInRange = StartNumber + NumbersInOtherBlocks * NumberOfRange; // первый элемент в блоке
+            long firstNumberInRange = startNumber + numbersInOtherBlocks * numberOfRange; // первый элемент в блоке
             return firstNumberInRange;
         }
 
@@ -246,7 +230,7 @@
             Agent agent = new Agent();
             int cores = agent.GetCores();
             long numbersInOtherBlocks = GetNumbersInOtherBlocks(givenTask.RangeStart, givenTask.RangeEnd, cores);
-            initialString = "----------";
+            string initialString = "----------";
 
             for (int i = 0; i < agent.GetCores(); ++i)
             {
@@ -257,7 +241,7 @@
                             long endNumberForBrute = GetEndRange(givenTask.RangeStart, numbersInOtherBlocks, cores, i) + 1;
                             string pas = agent.BruteForce(startNumberForBrute, endNumberForBrute, givenTask.Md5Sum);
 
-                            if (pas != String.Empty)
+                            if (pas != string.Empty)
                                 initialString = pas;
                         });
                 t.Start();
@@ -270,64 +254,52 @@
         /// <summary>
         /// Метод взаимодействия агента с диспетчером заданий.
         /// </summary>
-        public static void Interworking()
+        /// <param name="address">
+        /// Адресс узла диспетчера заданий.
+        /// </param>
+        /// <param name="port">
+        /// Порт указанного узла диспетчера заданий.
+        /// </param>
+        public static void Interworking(string address, int port)
         {
             TcpClient tcpClient = null;
             Agent agent = new Agent();
 
+            // Цикл бесконечных попыток подключения к диспетчеру заданий.
             while (true)
             {
                 try
                 {
-                    Console.WriteLine("Попытка подключиться к {0}:{1}", Address, Port);
+                    Console.WriteLine("Попытка подключиться к {0}:{1}", address, port);
 
-                    tcpClient = new TcpClient(Address, Port);
+                    tcpClient = new TcpClient(address, port);
+                    NetworkStream networkStream = tcpClient.GetStream();    // Базовый поток данных для доступа к сети.
+                    byte[] data = new byte[128];                            // Буфер для получаемых/отправляемых данных.
 
-                    NetworkStream networkStream = tcpClient.GetStream(); // Базовый поток данных для доступа к сети.
+                    Console.WriteLine("Установлено соединение {0}:{1}", address, port);
 
-                    byte[] data = new byte[128]; // Буфер для получаемых/отправляемых данных.
-
-                    // Отправляем диспетчеру информацию об агенте.
+                    // Отправляем диспетчеру задач информацию об агенте.
                     AgentInformation agentInfo = new AgentInformation(agent.GetCores(), agent.GetProductivity());
-                    // Здесь Agent отправляет информацию о себе диспетчеру заданий.
-
                     data = Encoding.Unicode.GetBytes(agentInfo.Serealize());
-
                     networkStream.Write(data, 0, data.Length);
 
                     while (true)
                     {
                         // Получаем задание от диспетчера заданий.
-                        StringBuilder message = new StringBuilder();
+                        string taskStr = GetStrFromStream(networkStream);
+                        Task task = Task.Deserealize(taskStr);
 
-                        do
-                        {
-                            int bytesCount = networkStream.Read(data, 0, data.Length);
-                            message.Append(Encoding.Unicode.GetString(data, 0, bytesCount));
+                        // Обрабатываем задание.
+                        string initialString = ParallelComputing(task);
 
-                        }
-                        while (networkStream.DataAvailable);
-
-                        Task task = Task.Deserealize(message.ToString());
-                        //Вычисление строки
-                        initialString = ParallelComputing(task);
-
-                        // Здесь агент предоставляет результаты вычислений.
-                        StringBuilder password = new StringBuilder();   
-                        password.Append(task.RangeStart);
-                        password.Append(" - ");
-                        password.Append(task.RangeEnd);
-
-                        data = Encoding.Unicode.GetBytes(initialString.ToString());
-
-                        // Сама передача
+                        // Отправляем результаты обработки задания диспетчеру заданий.
+                        data = Encoding.Unicode.GetBytes(initialString);
                         networkStream.Write(data, 0, data.Length); 
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Console.WriteLine("Попытка неудалось подключиться к серверу");
-                    //Console.WriteLine(ex.Message);
+                    Console.WriteLine("Ошибка подключения к {0}:{1}", address, port);
                 }
                 finally
                 {
@@ -335,8 +307,33 @@
                         tcpClient.Close();
                 }
                 
+                // Задержка перед очередной попыткой подключения к серверу.
                 Thread.Sleep(5000);
             }
+        }
+
+        /// <summary>
+        /// Метод считывания строки из базового потока данных для доступа к сети.
+        /// </summary>
+        /// <param name="networkStream">
+        /// Базовый поток данных для доступа к сети.
+        /// </param>
+        /// <returns>
+        /// Строка, считанная из потока.
+        /// </returns>
+        private static string GetStrFromStream(NetworkStream networkStream)
+        {
+            byte[] bytesBuffer = new byte[128];             // Буфер байтов получаемых данных.
+            StringBuilder dataStr = new StringBuilder();    // Строка получаемых данных.
+
+            do
+            {
+                int bytesCount = networkStream.Read(bytesBuffer, 0, bytesBuffer.Length);
+                dataStr.Append(Encoding.Unicode.GetString(bytesBuffer, 0, bytesCount));
+
+            } while (networkStream.DataAvailable);
+
+            return dataStr.ToString();
         }
     }
 }

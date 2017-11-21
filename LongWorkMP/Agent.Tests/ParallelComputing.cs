@@ -26,7 +26,7 @@
         {
             long startNumber = 120;
             long endNumber = 150;
-            int cores = this.myAgent.GetCores();
+            int cores = myAgent.GetCores();
 
             long numbersInOtherBlocks = Agent.GetNumbersInOtherBlocks(startNumber, endNumber, cores);
 
@@ -44,7 +44,7 @@
         {
             long startNumber = 120;
             long endNumber = 150;
-            int cores = this.myAgent.GetCores();
+            int cores = myAgent.GetCores();
 
             long numbersInOtherBlocks = Agent.GetNumbersInOtherBlocks(startNumber, endNumber, cores);
 

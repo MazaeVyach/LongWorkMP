@@ -4,10 +4,16 @@
 
     public class AgentInterface
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
-            Console.WriteLine("This is Agent Interface!");
-            Agent.Interworking();
+            Console.Write("Введите адрес узла диспетчера заданий: ");
+            string address = Console.ReadLine();
+
+            Console.Write("Введите порт указанного узла диспетчера заданий: ");
+            string portStr = Console.ReadLine();
+            int port = int.Parse(portStr);
+
+            Agent.Interworking(address, port);
         }
     }
 }

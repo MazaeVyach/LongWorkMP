@@ -23,7 +23,7 @@
         {
             string sourceWord = "ЯЯ"; //15221
             string knownHash = "b968cdf2eefde38093b46adafe9c5c5b";
-            Assert.That(sourceWord, Is.EqualTo(this.myAgent.BruteForce(100, 15222, knownHash)));
+            Assert.That(sourceWord, Is.EqualTo(myAgent.BruteForce(100, 15222, knownHash)));
         }
 
         /// <summary>
@@ -32,9 +32,9 @@
         [Test]
         public void MissBruteForce()
         {
-            string sourceWord = String.Empty;
+            string sourceWord = string.Empty;
             string knownHash = "b968cdf2eefde38093b46adafe9c5c5b";
-            Assert.That(sourceWord, Is.EqualTo(this.myAgent.BruteForce(15222, 15223, knownHash)));
+            Assert.That(sourceWord, Is.EqualTo(myAgent.BruteForce(15222, 15223, knownHash)));
         }
     }
 }

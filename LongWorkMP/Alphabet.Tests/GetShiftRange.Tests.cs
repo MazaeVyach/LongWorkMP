@@ -24,11 +24,11 @@ namespace Alphabet.Tests
         [Test]
         public void TestMissRange()
         {
-            Assert.That(() => this.myAlph.GetShiftRange(-1),
+            Assert.That(() => myAlph.GetShiftRange(-1),
                 Throws.TypeOf<ApplicationException>().
                     With.Message.EqualTo("Длина строки должна быть положительна!"));
 
-            Assert.Throws<ApplicationException>(() => this.myAlph.GetShiftRange(-1));
+            Assert.Throws<ApplicationException>(() => myAlph.GetShiftRange(-1));
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Alphabet.Tests
         [Test]
         public void TestFirstRange()
         {
-            long shift = this.myAlph.GetShiftRange(1);
+            long shift = myAlph.GetShiftRange(1);
             Assert.That(shift, Is.EqualTo(0));
         }
 
@@ -47,7 +47,7 @@ namespace Alphabet.Tests
         [Test]
         public void TestSecondRange()
         {
-            long shift = this.myAlph.GetShiftRange(2);
+            long shift = myAlph.GetShiftRange(2);
             Assert.That(shift, Is.EqualTo(128));
         }
 
@@ -57,7 +57,7 @@ namespace Alphabet.Tests
         [Test]
         public void TestThirdRange()
         {
-            long shift = this.myAlph.GetShiftRange(3);
+            long shift = myAlph.GetShiftRange(3);
             Assert.That(shift, Is.EqualTo(16512));
         }
 
@@ -67,7 +67,7 @@ namespace Alphabet.Tests
         [Test]
         public void TestFourthRange()
         {
-            long shift = this.myAlph.GetShiftRange(4);
+            long shift = myAlph.GetShiftRange(4);
             Assert.That(shift, Is.EqualTo(2113664));
         }
 
@@ -77,7 +77,7 @@ namespace Alphabet.Tests
         [Test]
         public void TestFifthRange()
         {
-            long shift = this.myAlph.GetShiftRange(5);
+            long shift = myAlph.GetShiftRange(5);
             Assert.That(shift, Is.EqualTo(270549120));
         }
 
@@ -87,7 +87,7 @@ namespace Alphabet.Tests
         [Test]
         public void TestSixthRange()
         {
-            long shift = this.myAlph.GetShiftRange(6);
+            long shift = myAlph.GetShiftRange(6);
             Assert.That(shift, Is.EqualTo(34630287488));
         }
     }
