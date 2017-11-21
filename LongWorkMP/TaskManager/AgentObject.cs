@@ -60,9 +60,11 @@
                     {
                         Console.WriteLine("Найденный пароль: {0}", password);
 
-                        break;
+                        _taskManager.PasswordFound();
                     }
                 }
+
+                Console.WriteLine("В данном диапазоне пароль не найден");
             }
             catch (Exception)
             {

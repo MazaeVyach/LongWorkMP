@@ -26,6 +26,8 @@
 
         private Alphabet alphabet;
 
+        public bool PasswordFoundFlag  { get; set; }
+
         private Stack<Task> queue;
 
         /// <summary>
@@ -45,10 +47,19 @@
             this.endRange = alphabet.StringToNumber(endRange);
             this.md5Sum = md5Sum;
             queue = new Stack<Task>();
+            PasswordFoundFlag = false;
+        }
+
+        public void PasswordFound()
+        {
+            PasswordFoundFlag = true;
         }
 
         public bool GetTask(long taskSize, ref Task task)
         {
+            if (PasswordFoundFlag)
+                return false;
+
             if (queue.Count != 0)
             {
                 task = queue.Pop();

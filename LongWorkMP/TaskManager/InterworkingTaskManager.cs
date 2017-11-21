@@ -36,7 +36,7 @@
 
                 _listener.Start();  // Запуск ожидания входящих запросов на подключение.
 
-                while (true)
+                while (taskManager.PasswordFoundFlag == false)
                 {
                     TcpClient client = _listener.AcceptTcpClient(); // Подключение нового клиента.
                     AgentObject agentObject = new AgentObject(client, ref taskManager);
