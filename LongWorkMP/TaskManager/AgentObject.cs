@@ -58,13 +58,13 @@
                     // Обрабатываем результат работы агента.
                     if (password != "----------")
                     {
-                        Console.WriteLine("Найденный пароль: {0}", password);
-
-                        _taskManager.PasswordFound();
+                        _taskManager.PasswordFound(password);
                     }
-                }
-
-                Console.WriteLine("В данном диапазоне пароль не найден");
+                    {
+                        if (!_taskManager.PasswordFoundFlag)
+                            Console.WriteLine("{0} - {1}", task.RangeStart, task.RangeEnd);
+                    }
+                }         
             }
             catch (Exception)
             {
@@ -115,5 +115,6 @@
         /// Диспетчер заданий.
         /// </summary>
         private readonly TaskManager _taskManager;
+
     }
 }

@@ -29,6 +29,11 @@
 
                 InterworkingTaskManager interworkingTaskManager = new InterworkingTaskManager(address, port);
                 interworkingTaskManager.Interworking(taskManager);
+
+                if (!taskManager.PasswordFoundFlag)
+                    Console.WriteLine("Пароль не найден");
+                else
+                    Console.WriteLine("Найденный пароль: {0}", taskManager.Password);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿namespace TaskManager
 {
+    using System;
     using System.Collections.Generic;
 
     using Alphabet;
@@ -30,6 +31,8 @@
 
         private Stack<Task> queue;
 
+        public string Password;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskManager"/> class.
         /// </summary>
@@ -49,9 +52,10 @@
             queue = new Stack<Task>();
             PasswordFoundFlag = false;
         }
-        //
-        public void PasswordFound()
+        
+        public void PasswordFound(string password)
         {
+            Password = password;
             PasswordFoundFlag = true;
         }
 
