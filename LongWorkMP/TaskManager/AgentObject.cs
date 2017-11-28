@@ -57,13 +57,7 @@
 
                     // Обрабатываем результат работы агента.
                     if (password != "----------")
-                    {
                         _taskManager.PasswordFound(password);
-                    }
-                    {
-                        if (!_taskManager.PasswordFoundFlag)
-                            Console.WriteLine("{0} - {1}", task.RangeStart, task.RangeEnd);
-                    }
                 }         
             }
             catch (Exception)

@@ -57,6 +57,7 @@
         {
             Password = password;
             PasswordFoundFlag = true;
+            Console.WriteLine();
         }
 
         public bool GetTask(long taskSize, ref Task task)
@@ -70,12 +71,16 @@
                 return true;
             }
 
+            int staus = (int)((curentValue - beginRange) * 100 / (this.endRange - this.beginRange));
+            Console.Write("\r{0}%", staus);
+
             long beginValue = curentValue;
             long endValue = beginValue + taskSize;
 
             if (curentValue > endRange)
             {
                 task = new Task(endRange, endRange, md5Sum);
+                Console.WriteLine();
                 return false;
             }
                

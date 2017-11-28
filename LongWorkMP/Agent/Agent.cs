@@ -265,17 +265,19 @@
             TcpClient tcpClient = null;
             Agent agent = new Agent();
 
+            bool isConcted = false;
+
+            Console.WriteLine("Попытка подключиться к {0}:{1}", address, port);
             // Цикл бесконечных попыток подключения к диспетчеру заданий.
             while (true)
             {
                 try
                 {
-                    Console.WriteLine("Попытка подключиться к {0}:{1}", address, port);
-
                     tcpClient = new TcpClient(address, port);
                     NetworkStream networkStream = tcpClient.GetStream();    // Базовый поток данных для доступа к сети.
                     byte[] data = new byte[128];                            // Буфер для получаемых/отправляемых данных.
 
+                    isConcted = true;
                     Console.WriteLine("Установлено соединение {0}:{1}", address, port);
 
                     // Отправляем диспетчеру задач информацию об агенте.
@@ -294,12 +296,16 @@
 
                         // Отправляем результаты обработки задания диспетчеру заданий.
                         data = Encoding.Unicode.GetBytes(initialString);
-                        networkStream.Write(data, 0, data.Length); 
+                        networkStream.Write(data, 0, data.Length);
                     }
+
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Ошибка подключения к {0}:{1}", address, port);
+                    if (isConcted)
+                        Console.WriteLine("Попытка подключиться к {0}:{1}", address, port);
+
+                    isConcted = false;
                 }
                 finally
                 {
