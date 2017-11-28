@@ -5,25 +5,25 @@
     using System.Net.Sockets;
     using System.Threading;
 
-    using Task;
-
+    /// <summary>
+    /// Класс для межсетевого взаимодействия диспетчера задач с агентами.
+    /// </summary>
     public class InterworkingTaskManager
     {
         /// <summary>
+        /// Конструктор класса межсетевого взаимодействия диспетчера задач с агентами.
+        /// </summary>
+        /// <param name="address">
         /// Адресс узла диспетчера заданий.
-        /// </summary>
-        private const string Address = "127.0.0.1";
-
-        /// <summary>
+        /// </param>
+        /// <param name="port">
         /// Порт указанного узла диспетчера заданий.
-        /// </summary>
-        private const int Port = 8888;
-
-        /// <summary>
-        /// Объект класса TcpListener, который будет прослушивать
-        /// подключения к диспетчеру заданий от агентов.
-        /// </summary>
-        private static TcpListener _listener;
+        /// </param>
+        public InterworkingTaskManager(string address, int port)
+        {
+            _address = address;
+            _port = port;
+        }
 
         /// <summary>
         /// Метод взаимодействия диспетчера заданий с агентами.
@@ -32,24 +32,18 @@
         {
             try
             {
-                _listener = new TcpListener(IPAddress.Parse(Address), Port);
+                _listener = new TcpListener(IPAddress.Parse(_address), _port);
 
                 _listener.Start();  // Запуск ожидания входящих запросов на подключение.
 
-                while (true)
+                while (taskManager.PasswordFoundFlag == false)
                 {
                     TcpClient client = _listener.AcceptTcpClient(); // Подключение нового клиента.
                     AgentObject agentObject = new AgentObject(client, ref taskManager);
 
                     // Создаем новый поток для обслуживания нового клиента.
                     Thread clientThread = new Thread(agentObject.Process);
-                    clientThread.Start();
-
-                   /* Task task = null;
-                    taskManager.GetTask(ref task);
-
-                    Console.WriteLine("Провалилось на задании: ", task);*/
-                    
+                    clientThread.Start();   
                 }
             }
             catch (Exception ex)
@@ -62,5 +56,21 @@
                     _listener.Stop();
             }
         }
+
+        /// <summary>
+        /// Адресс узла диспетчера заданий.
+        /// </summary>
+        private readonly string _address;
+
+        /// <summary>
+        /// Порт указанного узла диспетчера заданий.
+        /// </summary>
+        private readonly int _port;
+
+        /// <summary>
+        /// Объект класса TcpListener, который будет прослушивать
+        /// подключения к диспетчеру заданий от агентов.
+        /// </summary>
+        private static TcpListener _listener;
     }
 }

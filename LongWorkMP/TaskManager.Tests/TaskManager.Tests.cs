@@ -11,7 +11,7 @@ namespace TaskManager.Tests
     public class Tests
     {
         [Test]
-        public void SearchTests0()
+        public void SearchTest()
         {
             TaskManager taskManager = new TaskManager("a", "zz", "0cc175b9c0f1b6a831c399e269772661");
             Task task = null;

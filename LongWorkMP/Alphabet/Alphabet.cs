@@ -47,22 +47,22 @@
         public int DefineRange(long number)
         {
             int range = 0;
-            long lastCorrectNumber = this.GetShiftRange(7) - 1;
+            long lastCorrectNumber = GetShiftRange(7) - 1;
 
             // в случае выхода за границы 
             if (number < 0 || number > lastCorrectNumber) throw new ApplicationException("Число вне диапазона!");
 
-            if (number >= this.GetShiftRange(1) && number <= this.GetShiftRange(2) - 1) range =  1;
+            if (number >= GetShiftRange(1) && number <= GetShiftRange(2) - 1) range =  1;
 
-            if (number >= this.GetShiftRange(2) && number <= this.GetShiftRange(3) - 1) range =  2;
+            if (number >= GetShiftRange(2) && number <= GetShiftRange(3) - 1) range =  2;
 
-            if (number >= this.GetShiftRange(3) && number <= this.GetShiftRange(4) - 1) range =  3;
+            if (number >= GetShiftRange(3) && number <= GetShiftRange(4) - 1) range =  3;
 
-            if (number >= this.GetShiftRange(4) && number <= this.GetShiftRange(5) - 1) range =  4;
+            if (number >= GetShiftRange(4) && number <= GetShiftRange(5) - 1) range =  4;
 
-            if (number >= this.GetShiftRange(5) && number <= this.GetShiftRange(6) - 1) range = 5;
+            if (number >= GetShiftRange(5) && number <= GetShiftRange(6) - 1) range = 5;
 
-            if (number >= this.GetShiftRange(6) && number <= lastCorrectNumber ) range = 6;
+            if (number >= GetShiftRange(6) && number <= lastCorrectNumber ) range = 6;
 
             return range; 
         }
@@ -91,7 +91,7 @@
             }
 
             // начало диапазона (сдвиг) для строки длиной word.Length
-            long shift = this.GetShiftRange(word.Length);
+            long shift = GetShiftRange(word.Length);
 
             number += shift;
 
@@ -117,13 +117,13 @@
         /// </returns>
         public string NumberToString(long number)
         {
-            int range = this.DefineRange(number); // определение диапазона числа
+            int range = DefineRange(number); // определение диапазона числа
 
             char[] sBuilder = new char[range];
 
             // вычитаем из числа смещение диапазона для получения исходного числа
             // т.к. диапазон равен числу символов в слове
-            number -= this.GetShiftRange(range);
+            number -= GetShiftRange(range);
           
             for (int i = range - 1; i >= 0; i--)
             {

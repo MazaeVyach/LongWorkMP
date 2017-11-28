@@ -24,17 +24,17 @@ namespace Alphabet.Tests
         [Test]
         public void LengthTests()
         {
-            Assert.That(() => this.myAlph.StringToNumber(string.Empty),
+            Assert.That(() => myAlph.StringToNumber(string.Empty),
                 Throws.TypeOf<ApplicationException>().
                     With.Message.EqualTo("Неверная длина слова!"));
             
-            Assert.Throws<ApplicationException>(() => this.myAlph.StringToNumber(string.Empty));
+            Assert.Throws<ApplicationException>(() => myAlph.StringToNumber(string.Empty));
 
-            Assert.That(() => this.myAlph.StringToNumber("AAAAAAA"),
+            Assert.That(() => myAlph.StringToNumber("AAAAAAA"),
                 Throws.TypeOf<ApplicationException>().
                     With.Message.EqualTo("Неверная длина слова!"));
 
-            Assert.Throws<ApplicationException>(() => this.myAlph.StringToNumber("AAAAAAA"));
+            Assert.Throws<ApplicationException>(() => myAlph.StringToNumber("AAAAAAA"));
         }
 
         /// <summary>
@@ -43,17 +43,17 @@ namespace Alphabet.Tests
         [Test]
         public void AlphabetTests()
         {
-            Assert.That(() => this.myAlph.StringToNumber("侍"),
+            Assert.That(() => myAlph.StringToNumber("侍"),
                 Throws.TypeOf<ApplicationException>().
                     With.Message.EqualTo("Символы слова не из действующего алфавита!"));
 
-            Assert.Throws<ApplicationException>(() => this.myAlph.StringToNumber("侍"));
+            Assert.Throws<ApplicationException>(() => myAlph.StringToNumber("侍"));
 
-            Assert.That(() => this.myAlph.StringToNumber("können"),
+            Assert.That(() => myAlph.StringToNumber("können"),
                 Throws.TypeOf<ApplicationException>().
                     With.Message.EqualTo("Символы слова не из действующего алфавита!"));
 
-            Assert.Throws<ApplicationException>(() => this.myAlph.StringToNumber("können"));
+            Assert.Throws<ApplicationException>(() => myAlph.StringToNumber("können"));
         }
 
         /// <summary>
@@ -62,13 +62,13 @@ namespace Alphabet.Tests
         [Test]
         public void SingleCharacterTests()
         {
-            long start = this.myAlph.StringToNumber("A");
+            long start = myAlph.StringToNumber("A");
             Assert.That(start, Is.EqualTo(0));
 
-            long rus = this.myAlph.StringToNumber("Я");
+            long rus = myAlph.StringToNumber("Я");
             Assert.That(rus, Is.EqualTo(117));
 
-            long end = this.myAlph.StringToNumber("9");
+            long end = myAlph.StringToNumber("9");
             Assert.That(end, Is.EqualTo(127));
         }
 
@@ -78,19 +78,19 @@ namespace Alphabet.Tests
         [Test]
         public void TwoCharacterTests()
         {
-            long start = this.myAlph.StringToNumber("AA");
+            long start = myAlph.StringToNumber("AA");
             Assert.That(start, Is.EqualTo(128));
 
-            long sec = this.myAlph.StringToNumber("AC");
+            long sec = myAlph.StringToNumber("AC");
             Assert.That(sec, Is.EqualTo(130));
 
-            long thrd = this.myAlph.StringToNumber("CD");
+            long thrd = myAlph.StringToNumber("CD");
             Assert.That(thrd, Is.EqualTo(387));
 
-            long rus = this.myAlph.StringToNumber("ЯЯ");
+            long rus = myAlph.StringToNumber("ЯЯ");
             Assert.That(rus, Is.EqualTo(15221));
 
-            long end = this.myAlph.StringToNumber("99");
+            long end = myAlph.StringToNumber("99");
             Assert.That(end, Is.EqualTo(16511));
         }
 
@@ -100,13 +100,13 @@ namespace Alphabet.Tests
         [Test]
         public void ThreeCharacterTest()
         {
-            long start = this.myAlph.StringToNumber("AAA");
+            long start = myAlph.StringToNumber("AAA");
             Assert.That(start, Is.EqualTo(16512));
 
-            long rus = this.myAlph.StringToNumber("лев");
+            long rus = myAlph.StringToNumber("лев");
             Assert.That(rus, Is.EqualTo(1072438));
 
-            long end = this.myAlph.StringToNumber("999");
+            long end = myAlph.StringToNumber("999");
             Assert.That(end, Is.EqualTo(2113663));
         }
 
@@ -116,16 +116,16 @@ namespace Alphabet.Tests
         [Test]
         public void FourCharacterTest()
         {
-            long start = this.myAlph.StringToNumber("AAAA");
+            long start = myAlph.StringToNumber("AAAA");
             Assert.That(start, Is.EqualTo(2113664));
 
-            long eng = this.myAlph.StringToNumber("test");
+            long eng = myAlph.StringToNumber("test");
             Assert.That(eng, Is.EqualTo(96982701));
 
-            long rus = this.myAlph.StringToNumber("море");
+            long rus = myAlph.StringToNumber("море");
             Assert.That(rus, Is.EqualTo(139535161));
 
-            long end = this.myAlph.StringToNumber("9999");
+            long end = myAlph.StringToNumber("9999");
             Assert.That(end, Is.EqualTo(270549119));
         }
 
@@ -135,13 +135,13 @@ namespace Alphabet.Tests
         [Test]
         public void FiveCharacterTest()
         {
-            long start = this.myAlph.StringToNumber("AAAAA");
+            long start = myAlph.StringToNumber("AAAAA");
             Assert.That(start, Is.EqualTo(270549120));
 
-            long rus = this.myAlph.StringToNumber("КРОСС");
+            long rus = myAlph.StringToNumber("КРОСС");
             Assert.That(rus, Is.EqualTo(26255914087));
 
-            long end = this.myAlph.StringToNumber("99999");
+            long end = myAlph.StringToNumber("99999");
             Assert.That(end, Is.EqualTo(34630287487));
         }
 
@@ -151,13 +151,13 @@ namespace Alphabet.Tests
         [Test]
         public void SixCharacterTest()
         {
-            long start = this.myAlph.StringToNumber("AAAAAA");
+            long start = myAlph.StringToNumber("AAAAAA");
             Assert.That(start, Is.EqualTo(34630287488));
 
-            long rus = this.myAlph.StringToNumber("Подвиг");
+            long rus = myAlph.StringToNumber("Подвиг");
             Assert.That(rus, Is.EqualTo(3523067371319));
 
-            long end = this.myAlph.StringToNumber("999999");
+            long end = myAlph.StringToNumber("999999");
             Assert.That(end, Is.EqualTo(4432676798591));
         }
     }

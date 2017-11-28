@@ -8,70 +8,77 @@
     using AgentInformation;
 
     /// <summary>
-    /// Класс для взаимодействия диспетчера заданий с агентом.
+    /// Класс для взаимодействия диспетчера заданий с конкретным агентом в отдельном потоке.
     /// </summary>
     public class AgentObject
     {
-        public TcpClient Client;
-
-        private TaskManager _taskManager;
-
+        /// <summary>
+        /// Конструктор класса взаимодействия диспетчера заданий с конкретным агентом в отдельном потоке.
+        /// </summary>
+        /// <param name="tcpClient">
+        /// Клиентское подключение для сетевой службы протокола TCP.
+        /// </param>
+        /// <param name="taskManager">
+        /// Диспетчер заданий.
+        /// </param>
         public AgentObject(TcpClient tcpClient, ref TaskManager taskManager)
         {
-            Client = tcpClient;
+            _client = tcpClient;
             _taskManager = taskManager;
         }
 
+        /// <summary>
+        /// Метод обработки конкретного клиента в отдельном потоке.
+        /// </summary>
         public void Process()
         {
             NetworkStream networkStream = null; // Базовый поток данных для доступа к сети.
-
-            Task task = null;   // Отправляемое задание.
+            Task task = null;                   // Отправляемое задание.
 
             try
             {
-                networkStream = Client.GetStream();
+                networkStream = _client.GetStream();
 
-                // Получаем информацию о подключенном агенте.
+                // Получаем информацию о подключённом агенте.
                 string agentInfoStr = GetStrFromStream(networkStream);
                 AgentInformation agentInfo = AgentInformation.Deserealize(agentInfoStr);
-
-                // Здесь TaskManager заносит себе куда-то информацию о данном агента.
-                long taskSize = agentInfo.CoresCount * agentInfo.PasswordPerSecond * 5;
                 
+                // ???????
+                long taskSize = agentInfo.CoresCount * agentInfo.PasswordPerSecond * 5;
+
                 while (_taskManager.GetTask(taskSize, ref task))
                 {
+                    // Отправляем задание агенту.
                     byte[] data = Encoding.Unicode.GetBytes(task.Serealize());
                     networkStream.Write(data, 0, data.Length);
 
-                    // Получаем информацию о подобранном пароле.
-                    string password = GetStrFromStream(networkStream);  // Результат работы агента.
+                    // Получаем результат работы агента.
+                    string password = GetStrFromStream(networkStream);
 
-                    if (password == "КИРСОН ХУЕСОС")
-                        Console.WriteLine("На диапазоне {0} - {1} не найдено пароля", task.RangeStart, task.RangeEnd);
-                    else
-                        Console.WriteLine(password);
-                    // Здесь TaskManager обрабатывает результат работы агента.
+                    // Обрабатываем результат работы агента.
+                    if (password != "----------")
+                    {
+                        Console.WriteLine("Найденный пароль: {0}", password);
 
+                        _taskManager.PasswordFound();
+                    }
                 }
+
+                Console.WriteLine("В данном диапазоне пароль не найден");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Отправляем диспетчеру задание, во время 
+                // Отправляем диспетчеру задач задание, во время 
                 // выполнения которого агент завершил свою работу.
                 _taskManager.PushTask(task);
-
-                Console.WriteLine("Провалилось на диапазоне {0} - {1}", task.RangeStart, task.RangeEnd);
-
-                Console.WriteLine(ex.Message);
             }
             finally
             {
                 if (networkStream != null)
                     networkStream.Close();
 
-                if (Client != null)
-                    Client.Close();
+                if (_client != null)
+                    _client.Close();
             }
         }
 
@@ -98,5 +105,15 @@
 
             return dataStr.ToString();
         }
+
+        /// <summary>
+        /// Клиентское подключение для сетевой службы протокола TCP.
+        /// </summary>
+        private readonly TcpClient _client;
+
+        /// <summary>
+        /// Диспетчер заданий.
+        /// </summary>
+        private readonly TaskManager _taskManager;
     }
 }

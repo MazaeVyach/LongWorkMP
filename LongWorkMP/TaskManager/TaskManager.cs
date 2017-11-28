@@ -26,6 +26,8 @@
 
         private Alphabet alphabet;
 
+        public bool PasswordFoundFlag  { get; set; }
+
         private Stack<Task> queue;
 
         /// <summary>
@@ -39,38 +41,47 @@
         /// </param>
         public TaskManager(string beginRange, string endRange, string md5Sum)
         {
-            this.alphabet = new Alphabet();
-            this.beginRange = this.alphabet.StringToNumber(beginRange);
-            this.curentValue = this.beginRange;
-            this.endRange = this.alphabet.StringToNumber(endRange);
+            alphabet = new Alphabet();
+            this.beginRange = alphabet.StringToNumber(beginRange);
+            curentValue = this.beginRange;
+            this.endRange = alphabet.StringToNumber(endRange);
             this.md5Sum = md5Sum;
             queue = new Stack<Task>();
+            PasswordFoundFlag = false;
+        }
+
+        public void PasswordFound()
+        {
+            PasswordFoundFlag = true;
         }
 
         public bool GetTask(long taskSize, ref Task task)
         {
+            if (PasswordFoundFlag)
+                return false;
+
             if (queue.Count != 0)
             {
-                task = this.queue.Pop();
+                task = queue.Pop();
                 return true;
             }
 
-            long beginValue = this.curentValue;
+            long beginValue = curentValue;
             long endValue = beginValue + taskSize;
 
-            if (this.curentValue > this.endRange)
+            if (curentValue > endRange)
             {
-                task = new Task(this.endRange, this.endRange, this.md5Sum);
+                task = new Task(endRange, endRange, md5Sum);
                 return false;
             }
                
-            if (endValue > this.endRange)
+            if (endValue > endRange)
             {
-                endValue = this.endRange;
+                endValue = endRange;
             }
 
-            this.curentValue = endValue + 1;
-            task = new Task(beginValue, endValue, this.md5Sum);
+            curentValue = endValue + 1;
+            task = new Task(beginValue, endValue, md5Sum);
 
             return true;
         }
@@ -79,6 +90,5 @@
         {
             queue.Push(task);
         }
-   
     }
 }
